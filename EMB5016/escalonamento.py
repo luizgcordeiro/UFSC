@@ -59,7 +59,7 @@ def triangulariza(A,tol=1.0e-10,verbose=False):
                 verboseprint("Precisamos trocar a linha " + \
                     str(numero_de_pivos) + " com a linha " + str(p) + ".")
                 l=B[p,:].copy()
-                B[p,:]=B[numero_de_pivos,:]
+                B[p,:]=B[numero_de_pivos,:]#.copy() já é feito automaticamente
                 B[numero_de_pivos,:]=l
                 verboseprint(B)
             #end if
