@@ -166,7 +166,7 @@ def der_f(x):
     return exp(x)*(sin(x)+cos(x))
 #end  def
 
-print(newton(f,0,der_f,verbose=True))
+print(falsa_posicao(f,0,1,verbose=True))
 
 
 #comment
