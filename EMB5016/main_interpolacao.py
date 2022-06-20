@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from int_pol import *
 
-n=10
+n=20
 
 x=np.random.choice(range(2*n),n+1,replace=False)
 y=np.random.randint(low=-10,high=10,size=n+1)
@@ -33,23 +33,14 @@ for i in range(n):
     print("\n")
 #end for
 
-print("==========")
-print("GREGORY-NEWTON:")
-g=gregory_newton(x,y)
 
-for i in range(n):
-    print("x="+str(x[i]))
-    print("y="+str(y[i]))
-    print("g(x)="+str(g(x[i])))
-    print("\n")
-#end for
 
 dom=np.arange(np.min(x),np.max(x),0.01)
 
 ran=dom.copy()
 
 for i in range(np.shape(ran)[0]):
-    ran[i]=g(dom[i])
+    ran[i]=f(dom[i])
 #end for
 
 xx=[]

@@ -4,6 +4,15 @@ import numpy as np
 import escalonamento
 
 def int_pol_lin(x,y):
+    '''
+    Calcula a funcao polinomial de grau <= n
+    que interpola pontos (x[0],y[0]), (x[1],y[1]),
+    ... (x[n],y[n])
+
+    INPUT: listas x=[x[0],x[1],...,x[n]) e y=[y[0],y[1],...,y[n]]
+
+    OUTPUT: funcao polinomial f=f(x) interpoladora
+    '''
     n=len(x)-1
 
     A=np.matrix(np.zeros([n+1,n+2]).astype(float))
