@@ -1,3 +1,5 @@
+import matplotlib as plt
+
 import numpy as np
 import escalonamento
 
@@ -16,7 +18,7 @@ def int_pol_lin(x,y):
             A[i,j]=x[i]**j
         #end for
     #end for
-    
+
     A=escalonamento.escalona(A)[0]
 
     def f(t):
@@ -57,14 +59,14 @@ def diferenca_dividida(x,y,k,i):
     else:
         return (diferenca_dividida(x,y,k-1,i+1)-diferenca_dividida(x,y,k-1,i))/(x[i+k]-x[i])
     #end if-else
-#end def    
+#end def
 
 def gregory_newton(x,y):
-    n=len(x)
+    n=len(x)-1
 
     def f(t):
         soma=y[0]
-        for k in range(1,n):
+        for k in range(1,n+1):
             prod=1
             for j in range(k):
                 prod*=(t-x[j])
