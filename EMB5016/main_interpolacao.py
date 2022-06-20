@@ -3,7 +3,7 @@ from int_pol import *
 
 n=8
 
-x=list(range(n+1))
+x=np.random.choice(range(2*n),n,replace=False)
 y=np.random.randint(low=-10,high=10,size=n+1)
 #y=np.random.randint(low=-10,high=10,size=n+1)
 
