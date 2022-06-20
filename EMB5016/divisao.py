@@ -21,7 +21,7 @@ print("Tempo para " + str(n) + " multiplicações: " + str(t) + " segundos.")
 start_time=time.time()
 
 for i in range(n):
-    1/x[i]
+    y[i]/x[i]
 #end for
 
 t=time.time()-start_time
