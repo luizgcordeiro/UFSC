@@ -1,6 +1,6 @@
 import numpy as np
 
-def triangulariza(A,tol=1.0e-10,verbose=False):
+def triangulariza(A,tol=1.0e-10,verbose=False,pivot="partial"):
     '''Esta função triangulariza uma matriz A com pivotação parcial.
 
     Parâmetros
