@@ -25,15 +25,15 @@ def matrix_to_latex(A,begin="\\begin{bmatrix}",end="\\end{bmatrix}"):
 
     for i in range(m-1):
         for j in range(n-1):
-            string+=str(A[i][j]) + "&"
+            string+=str(A[i,j]) + "&"
         #end for
-        string+=str(A[i][n-1])+"\\\\"
+        string+=str(A[i,n-1])+"\\\\"
     #end for
 
     i=m-1
 
     for j in range(n-1):
-        string+=str(A[i][j]) + "&"
+        string+=str(A[i,j]) + "&"
     #end for
 
     string+=str(A[m-1,n-1])+end
@@ -100,7 +100,7 @@ def unimodular(m,li=10):
 #############################################
 #############################################
 
-def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose=False,):
+def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose=False,index_start=0):
     """Triangularizes a matrix.
 
     Parameters
@@ -121,7 +121,8 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
         how the triangularization was done. To be used as a teaching resource.
     verbose : boolean, optional
         To print steps explanations.
-    
+    index_start : positive integer, optional
+        Starting index for matrices. Used for verbose and write_latex
 
     Returns
     ----------
@@ -157,6 +158,11 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
         print(T)
     #end if
 
+    if write_latex:
+        S+="\n\\begin{align*}\n"+matrix_to_latex(T)
+        first_line=True # Detail for line break
+    #end if
+
     while (j<n_colunas and numero_de_pivos<n_linhas):
         if verbose:
             print("=====")
@@ -168,7 +174,7 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
             #Let pivot be the largest entry in the column
             pivot_position=np.argmax(abs(T[numero_de_pivos:,j]))+numero_de_pivos
             
-            if abs(T[p,j])>tol:
+            if abs(T[pivot_position,j])>tol:
 
                 #verboseprint("O pivô da coluna " + str(j) " está na linha " + str(p) + ".")
 
@@ -208,7 +214,7 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
                     print("A coluna " + str(j) + " não tem pivô.")
                 #end if verbose
             #end if
-        #passa pra próxima coluna
+        #end if
 
         elif pivoting=="integer":
             # In the integer case, we perform in a manner similar to Euclid's Algorithm for finding GCD
@@ -218,15 +224,13 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
             positions_nonzeros=[]
             len_positions_nonzeros=0#Calculate length is O(n), so better avoid it
             T_nonzeros=[]
-
-
+            
             for i in range(numero_de_pivos,n_linhas):
                 if T[i,j] != 0:
                     positions_nonzeros+=[i]
                     len_positions_nonzeros+=1
                     T_nonzeros+=[T[i,j]]
                 #end if
-                print("Encontramos uma entrada não nula")
             #end for
 
             while len_positions_nonzeros>=2:
@@ -237,13 +241,29 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
                     if i!=pivot_position:
                         multiplicador=(T[i,j] // T[pivot_position,j])
                         
-
                         T[i]=np.subtract(T[i],np.multiply(multiplicador,T[pivot_position]))
 
                         if verbose:
                             print("Subtract " + str(multiplicador) + " times row " + str(pivot_position) + " from row " + str(i) + ".")
                             print(T)
+                        #end if verbose
+
+                        if write_latex:
+                            if not(first_line):
+                                S+="\\\\\n"
+                            #end if
+                            S+=\
+                                "&\\xrightarrow{R_{" + str(i+index_start) + "}"\
+                                + ("-" if (multiplicador>0) else "+" )\
+                                + str(abs(multiplicador))\
+                                + "R_{" + str(pivot_position+index_start) + "}"\
+                                + " \\to R_{" + str(i+1) + "}}"\
+                                + matrix_to_latex(T)
+
+                            first_line=False
+                        #end if write_latex
                     #endif
+
                 #end for
 
                 positions_nonzeros=[]
@@ -270,6 +290,19 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
                         print(T)
                     #end if verbose
                 
+                    if write_latex:
+                        if not(first_line):
+                            S+="\\\\\n"
+                        #end if
+                        S+=\
+                            "&\\xrightarrow{R_{" + str(numero_de_pivos+index_start) + "}"\
+                            + " \\leftrightarrow "\
+                            + "R_{" + str(pivot_position+index_start) + "}}"\
+                            + matrix_to_latex(T)
+                            
+                        first_line=False
+                    #end if write_latex
+
                 numero_de_pivos+=1
                 P.append(j)
             #end if
@@ -279,5 +312,8 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
         j+=1
     #end while
 
+    if write_latex:
+        S+="\n\\end{align*}"
+    #end if write_latex
     return [T,P,S,X]
 #end def
