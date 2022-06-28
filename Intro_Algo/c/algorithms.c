@@ -41,7 +41,6 @@ int main() {
 
     printf("\n");
 
-    scanf("");
     return 0;
 }
 
@@ -52,9 +51,9 @@ void print_int_vector(int * v, int n) {
     printf("[");
     int i;
     for (i=0;i<n-1;i++) {
-        printf("%.4f,",v[i]);
+        printf("%d,",v[i]);
     }
-    printf("%.4f]",v[n-1]);
+    printf("%d]",v[n-1]);
 
     return;
 }
