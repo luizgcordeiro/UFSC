@@ -5,10 +5,12 @@
 
 void print_int_vector(int * v, int n);
 void insertion_sort(int * v , int n);
+int word_compare(char * str1,char * str2);
+void insertion_sort_dictionary (char ** dict, int n);
 
 int main() {
 
-    char * dict[3];
+    char *dict[3];
 
     char * str1="banana";
 
@@ -20,11 +22,18 @@ int main() {
     dict[1]=str2;
     dict[2]=str3;
     
-    srand(time(NULL));//randomize
+    int i,j;
+    insertion_sort_dictionary(dict,3);
+
+    for (i=0;i<3;i++) {
+        printf("%s\n",dict[i]);
+    }
+    return 0;
+    /*srand(time(NULL));//randomize
 
     int n=10;
     
-    int v[10];
+    int v[n];
 
     int i;
     for (i=0;i<n;i++) {
@@ -39,9 +48,8 @@ int main() {
 
     print_int_vector(v,n);
 
-    printf("\n");
+    printf("\n");*/
 
-    return 0;
 }
 
 /*
@@ -89,16 +97,15 @@ int word_compare(char * str1,char * str2) {
         Equivalently, gives the Boolean value of "str2>str1"
     */
 
-   int i=0;
-   for (i=0; str1[i]==str2[i]; i++);
-   
-   //i is the first index at which str1 and str2 differ
+    int i;
+    for (i=0;str1[i]==str2[i] && str1[i]!=0;i++);
+    //i is the first index at which str1 and str2 differ, or at which str1 ends
 
-   if (str1[i]<str2[i]) {
-    return 1;
-   }
+    if (str1[i]<str2[i]) {
+        return 1;
+    }
 
-   return 0;
+    return 0;
 }
 
 void insertion_sort_dictionary (char ** dict, int n) {
@@ -108,15 +115,15 @@ void insertion_sort_dictionary (char ** dict, int n) {
 
     int j;
 
-   for (j=1;j<n;j++) {
-    char * key=dict[j]; //This is the value which will be compared to the previous ones
-    int i=j-1;
+    for (j=1;j<n;j++) {
+        char * key=dict[j]; //This is the value which will be compared to the previous ones
+        int i=j-1;
 
-    while (i>=0 && word_compare(key,dict[i])) {
-        strcpy(dict[i+1],dict[i]);
-        i--;
-    }
+        while (i>=0 && word_compare(key,dict[i])) {
+            dict[i+1]=dict[i];
+            i--;
+        }
 
-    strcpy(dict[i+1],key);
+        dict[i+1]=key;
    }
 }
