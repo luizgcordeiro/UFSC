@@ -3,6 +3,9 @@ import time
 
 from functions import *
 
-A=np.random.randint(low=-10,high=10,size=(4,4))
+A=np.random.randint(low=-2,high=5,size=(4,4))
 print(type(A))
-triangularization(A,pivoting="integer",verbose=True)
+
+X=triangularization(A,pivoting="integer",verbose=True,write_latex=True,index_start=1)
+
+print(X[2])
