@@ -100,7 +100,7 @@ def unimodular(m,li=10):
 #############################################
 #############################################
 
-def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose=False,index_start=0):
+def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose=False,index_start=0,latex_begin="\\begin{bmatrix}",latex_end="\\end{bmatrix}"):
     """Triangularizes a matrix.
 
     Parameters
@@ -120,9 +120,13 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
         Determines if the return contains a string which with LaTeX code that explains
         how the triangularization was done. To be used as a teaching resource.
     verbose : boolean, optional
-        To print steps explanations.
+        To print steps explanations. Default is False.
     index_start : positive integer, optional
-        Starting index for matrices. Used for verbose and write_latex
+        Starting index for matrices. Used for verbose and write_latex. Default is 0.
+    latex_start : string, optional
+        LaTeX code which will initialize matrices. Default is "\\begin{bmatrix}".
+    latex_start : string, optional
+        LaTeX code which will end matrices. Default is "\\end{bmatrix}".
 
     Returns
     ----------
@@ -159,7 +163,7 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
     #end if
 
     if write_latex:
-        S+="\n\\begin{align*}\n"+matrix_to_latex(T)
+        S+="\n\\begin{align*}\n"+matrix_to_latex(T,begin=latex_begin,end=latex_end)
         first_line=True # Detail for line break
     #end if
 
@@ -258,7 +262,7 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
                                 + str(abs(multiplicador))\
                                 + "R_{" + str(pivot_position+index_start) + "}"\
                                 + " \\to R_{" + str(i+1) + "}}"\
-                                + matrix_to_latex(T)
+                                + matrix_to_latex(T,begin=latex_begin,end=latex_end)
 
                             first_line=False
                         #end if write_latex
@@ -298,7 +302,7 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
                             "&\\xrightarrow{R_{" + str(numero_de_pivos+index_start) + "}"\
                             + " \\leftrightarrow "\
                             + "R_{" + str(pivot_position+index_start) + "}}"\
-                            + matrix_to_latex(T)
+                            + matrix_to_latex(T,begin=latex_begin,end=latex_end)
                             
                         first_line=False
                     #end if write_latex

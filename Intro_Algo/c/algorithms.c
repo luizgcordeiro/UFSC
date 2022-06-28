@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+
+void print_int_vector(int * v, int n);
+void insertion_sort(int * v , int n);
 
 int main() {
 
@@ -16,13 +20,44 @@ int main() {
     dict[1]=str2;
     dict[2]=str3;
     
-    printf("yeah");
+    srand(time(NULL));//randomize
+
+    int n=10;
+    
+    int v[10];
+
+    int i;
+    for (i=0;i<n;i++) {
+        v[i]=rand()%10;
+    }
+
+    print_int_vector(v,n);
+
+    printf("\n");
+
+    insertion_sort(v,n);
+
+    print_int_vector(v,n);
+
+    printf("\n");
+
+    scanf("");
     return 0;
 }
 
 /*
     Section 2.1
 */
+void print_int_vector(int * v, int n) {
+    printf("[");
+    int i;
+    for (i=0;i<n-1;i++) {
+        printf("%.4f,",v[i]);
+    }
+    printf("%.4f]",v[n-1]);
+
+    return;
+}
 
 void insertion_sort(int * v , int n) {
     /*
