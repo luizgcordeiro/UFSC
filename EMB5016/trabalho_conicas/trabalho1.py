@@ -281,7 +281,7 @@ def trabalho1_conica(X,verbose=False,tol=1.0e-14,plot=True):
   if abs(det_tip)<tol+4*maxcoef*delt:
     verboseprint('Para fins computacionais, esse determinante é nulo.')
     print('A cônica é uma parábola.')
-    tipodeconica='parábola'
+    tipodeconica='parabola'
   elif det_tip>0:
     verboseprint('Esse determinante é positivo.')
     print('A cônica é uma elipse.')
@@ -289,7 +289,7 @@ def trabalho1_conica(X,verbose=False,tol=1.0e-14,plot=True):
   else:
     verboseprint('Esse determinante é negativo.')
     print('A cônica é uma hipérbole.')
-    tipodeconica='hipérbole'
+    tipodeconica='hiperbole'
   #end if
 
   if plot:
@@ -338,8 +338,25 @@ def trabalho1_conica(X,verbose=False,tol=1.0e-14,plot=True):
 
 ###############################
 #Abaixo, a função que resolve a parte do trabalho que requer encontrar pontos de intersecção da cônica com uma reta.
+
+def raiz_newton(x):
+  #Retorna a raiz de x pelo método de Newton
+  #Em todas as iterações, se tem y>sqrt(c); de fato, (x*x+c)/(2*x)>sqrt(c) é equivalente a (x^2-c)^2>0, o que é sempre válido
+  #Ou seja; o chute vem de cima!!!
+  #(Na verdade, isso deve valer para funções convexas...)
+  #Como a iteração é decrescente, ela obrigatoriamente pára em algum momento
   
-def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
+  y_o=x+1
+  y_n=(y_o*y_o+x)/(2*y_o)
+  while y_o>y_n:
+    y_n,y_o=(y_n*y_n+x)/(2*y_n),y_n
+  #end while
+
+  return y_o
+#end def
+
+
+def trabalho1_int(X,verbose=False,tol=1.0e-10,plot=True):
   '''
   Esta função determina a cônica via
   trabalho1_conica(X,verbose,tol,plot=False)
@@ -383,17 +400,16 @@ def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
   verboseprint('=====')
 
   verboseprint(
-    'Vamos determinar a intersecção da reta'+'\n'
-    +'x='+str(c)+'\n'
+    'Vamos determinar a intersecção do eixo y'+'\n'
     +'com a cônica determinada acima.'
   )
   verboseprint('=====')
 
   #A quadrática abaixo é obtida na mão, fazendo manipulações triviais:
   verboseprint(
-    'Substituindo esse valor de x na equação da cônica,'+'\n'
+    'Substituindo x=0 na equação da cônica,'+'\n'
     +'obtemos a equação'+'\n'
-    +'('+str(C)+'y^2)+('+str((2*B*c)+(2*E))+'y)+('+str((A*c*c)+(2*D*c)+F)+')=0,'+'\n'
+    +'('+str(C)+'y^2)+('+str(2*E)+'y)+('+str(F)+')=0,'+'\n'
     +'na variável y.'
   )
 
@@ -404,14 +420,14 @@ def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
       'A equação é linear.'
     )
     verboseprint('=====')
-    if abs((2*B*c)+(2*E))<tol:
+    if abs(2*E)<tol:
       #--Caso a=0, então a equação vira b=0. Neste caso, o conjunto solução é vazio (caso b!=0), ou é a reta real inteira (caso b=0). Mas o segundo caso implicaria que a cônica não-degenerada contém a reta x=c, o que não pode ser. Então neste caso, o conjunto solução é vazio.
       verboseprint('Não existe ponto de intersecção')
       I=[]
     else:
       #--Caso a!=0, então só há a solução y=-b/a.
       verboseprint('Existe somente um ponto de intersecção:')
-      I=[-((A*c*c)+(2*D*c)+F)/((2*B*c)+(2*E))]
+      I=[-F/(2*E)]
       verboseprint('y='+str(I[0]))
     #end if
   else:
@@ -420,14 +436,14 @@ def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
       'A equação é quadrática, com discriminante igual a'
     )
   
-    discriminante=(((2*B*c)+(2*E))*((2*B*c)+(2*E)))-(4*C*((A*c*c)+(2*D*c)+F))
+    discriminante=(2*E*2*E)-(4*C*F)
     verboseprint(str(discriminante)+'.')
 
     verboseprint('=====')
     if abs(discriminante)<tol:
       verboseprint('Existe somente um ponto de intersecção:')
       #-b/2a, a fórmula usual
-      I=[-((2*B*c)+(2*E))/(2*C)]
+      I=[-(2*E)/(2*C)]
       verboseprint('y='+str(I[0]))
     elif discriminante<0:
       verboseprint('Não existe ponto de intersecção')
@@ -435,16 +451,71 @@ def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
     else:
       verboseprint('Existem dois pontos de intersecção:')
       
-      #Vamos calcular a raiz do discriminante utilizando o método de Newton na função f(x)=x^2-discriminante, o que já foi feito na aula 7
-      def g(x):
-        return x*x-discriminante
-      #end def
+      #Vamos calcular a raiz do discriminante utilizando o método de Newton na função f(x)=x^2-discriminante
 
-      raizdiscriminante=semana7.newton(g,1.0,verbose=False)
-      I=[(-((2*B*c)+(2*E))-raizdiscriminante)/(2*C),(-((2*B*c)+(2*E))+raizdiscriminante)/(2*C)]
+      raizdiscriminante=raiz_newton(discriminante)
+      I=[(-(2*E)-raizdiscriminante)/(2*C),(-(2*E)+raizdiscriminante)/(2*C)]
       verboseprint('y='+str(I[0]))
       verboseprint('e')
       verboseprint('y='+str(I[1]))
+    #end if-else (quadrática tem quantas raízes)
+  #end if-else (quadrática ou linear)
+
+  ######################################
+  verboseprint(
+    'Vamos determinar a intersecção do eixo x'+'\n'
+    +'com a cônica determinada acima.'
+  )
+  verboseprint('=====')
+
+  #A quadrática abaixo é obtida na mão, fazendo manipulações triviais:
+  verboseprint(
+    'Substituindo y=0 na equação da cônica,'+'\n'
+    +'obtemos a equação'+'\n'
+    +'('+str(A)+'x^2)+('+str(2*D)+'x)+('+str(F)+')=0,'+'\n'
+    +'na variável x.'
+  )
+
+  #Aqui, temos vários casos a considerar:  
+  if abs(A)<tol:
+    verboseprint(
+      'A equação é linear.'
+    )
+    verboseprint('=====')
+    if abs(2*D)<tol:
+      verboseprint('Não existe ponto de intersecção')
+      J=[]
+    else:
+      verboseprint('Existe somente um ponto de intersecção:')
+      J=[-F/(2*D)]
+      verboseprint('x='+str(J[0]))
+    #end if
+  else:
+    verboseprint(
+      'A equação é quadrática, com discriminante igual a'
+    )
+  
+    discriminante=(2*D*2*D)-(4*A*F)
+    verboseprint(str(discriminante)+'.')
+
+    verboseprint('=====')
+    if abs(discriminante)<tol:
+      verboseprint('Existe somente um ponto de intersecção:')
+      J=[-D/A]
+      verboseprint('x='+str(I[0]))
+    elif discriminante<0:
+      verboseprint('Não existe ponto de intersecção')
+      J=[]
+    else:
+      verboseprint('Existem dois pontos de intersecção:')
+      
+      #Vamos calcular a raiz do discriminante utilizando o método de Newton na função f(x)=x^2-discriminante
+
+      raizdiscriminante=raiz_newton(discriminante)
+      J=[(-(2*D)-raizdiscriminante)/(2*A),(-(2*D)+raizdiscriminante)/(2*A)]
+      verboseprint('x='+str(J[0]))
+      verboseprint('e')
+      verboseprint('x='+str(J[1]))
     #end if-else (quadrática tem quantas raízes)
   #end if-else (quadrática ou linear)
 
@@ -454,14 +525,16 @@ def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
     verboseprint('=====')
     verboseprint(
       'Por fim, vamos plotar a cônica que passa pelos pontos'+'\n'
-      +'dados, e a reta x=c.'
+      +'dados e os eixos coordenados y.'
     )
 
     #Consideramos também uma largura suficiente para mostrar a reta x=c
-    xmin=min([X[0,0],X[1,0],X[2,0],X[3,0],X[4,0],float(c)])
-    xmax=max([X[0,0],X[1,0],X[2,0],X[3,0],X[4,0],float(c)])
-    ymin=min([X[0,1],X[1,1],X[2,1],X[3,1],X[4,1]])
-    ymax=max([X[0,1],X[1,1],X[2,1],X[3,1],X[4,1]])
+    J+=[0]
+    I+=[0]
+    xmin=min([X[0,0],X[1,0],X[2,0],X[3,0],X[4,0],min(J)])
+    xmax=max([X[0,0],X[1,0],X[2,0],X[3,0],X[4,0],max(J)])
+    ymin=min([X[0,1],X[1,1],X[2,1],X[3,1],X[4,1],min(I)])
+    ymax=max([X[0,1],X[1,1],X[2,1],X[3,1],X[4,1],max(I)])
 
     xscale=xmax-xmin
     yscale=ymax-ymin
@@ -479,17 +552,35 @@ def trabalho1_int(X,c,verbose=False,tol=1.0e-10,plot=True):
       plt.text(X[i,0],X[i,1],'('+str(round(X[i,0],2))+','+str(round(X[i,1],2))+')')
     #end for
 
-    #Vamos desenhar a reta x=c
-    plt.plot([c,c],[ymin-.25*yscale,ymax+.25*yscale])
+    #Vamos desenhar o eixo y
+    plt.plot([0,0],[ymin-.25*yscale,ymax+.25*yscale])
 
     for i in I:
-      plt.plot([c],[i],'o')
-      plt.text(c,i,'('+str(round(c,2))+','+str(round(i,2))+')')
+      plt.plot([0],[i],'o')
+      plt.text(0,i,'('+str(round(0,2))+','+str(round(i,2))+')')
     #end for
 
+    #Vamos desenhar o eixo x
+    plt.plot([xmin-.25*xscale,xmax+.25*xscale],[0,0])
+
+    for j in J:
+      plt.plot([j],[0],'o')
+      plt.text(j,0,'('+str(round(j,2))+','+str(round(0,2))+')')
+    #end for
+
+    plt.title(
+      valores_coefs[0] + " determinada pela equacao\n" +
+      ((str(round(A,2)) +"x^2") if abs(A)>tol else "")\
+      + (((" + " if B>0 else " - ") + "2*" + str(abs(round(B,2))) + "xy") if abs(B)>tol else "")\
+      + (((" + " if C>0 else " - ") + str(abs(round(C,2))) + "y^2") if abs(C)>tol else "")\
+      + (((" + " if D>0 else " - ") + "2*" + str(abs(round(D,2))) + "x") if abs(D)>tol else "")\
+      + (((" + " if E>0 else " - ") + "2*" + str(abs(round(E,2))) + "y") if abs(E)>tol else "")\
+      + (((" + " if F>0 else " - ") + str(abs(round(F,2)))) if abs(F)>tol else "")\
+      + " = 0"
+    )
     plt.show()
   #end if
 
-  return I
+  return [I,J]
 
 #end def

@@ -3,7 +3,7 @@ import funcoes_teste
 import trabalho1
 import sys
 
-def conica_aleatorio(tipo='',lim=3,integer=True,verbose=False):
+def conica_aleatorio(tipo='',lim=3,integer=True,verbose=False,through_zero=False):
   '''Cria aleatoriamente 5 pontos do plano cartesiano que determinam uma cônica.
   
     Parâmetros
@@ -183,8 +183,19 @@ def conica_aleatorio(tipo='',lim=3,integer=True,verbose=False):
     #end while
   #end if
 
-  q=np.matrix(np.random.randint(low=-lim,high=lim+1,size=(1,2))).astype(float)
-
+  if through_zero:
+    if tipo=="parabola":
+      #A conica original passa pelo zero
+      q=np.matrix([[0,0]]).astype(float)
+    elif tipo=="elipse":
+      #A conica original passa pelo (25,60)
+      q=(np.matrix([[25,60]]).astype(float))@T
+    elif tipo=="hiperbole":
+      #A conica original passa pelo (1,r)
+      q=(np.matrix([[1,r]]).astype(float))@T
+  else:
+    q=np.matrix(np.random.randint(low=-lim,high=lim+1,size=(1,2))).astype(float)
+  #
   verboseprint(
     'A função afim que vamos aplicar é\n'+
     'x --> xT+q,\n'+
@@ -233,17 +244,102 @@ X_p=conica_aleatorio(tipo="parabola")
 
 #Checar se a hiperbole esta boa
 
-type_of_conic=sys.argv[1]
-print(type_of_conic)
-if type_of_conic=="p":
-    X=X_p
-elif type_of_conic=="h":
-    X=X_h
-elif type_of_conic=="e":
-    X=X_e
+X_n0=np.array([
+  [1,1],
+  [2,2],
+  [3,3],
+  [4,5],
+  [10,15]
+]) #Não é cônica; tem pontos colineares
 
+X_n1=np.array([
+  [0,0],
+  [1,1],
+  [2,4],
+  [3,9],
+  [1,1]
+]) #Nao é cônica; tem pontos repetidos
 
-C=trabalho1.trabalho1_conica(X[0],verbose=True)
-print("Coeficientes: "
-print(C[1])
+X_n0=[
+    [ 1 , 1],
+    [ 2 , 2],
+    [ 3 , 3],
+    [ 4 , 5],
+    [10 , 15]
+]
+#Não é cônica, pontos colineares
 
+X_n1=[
+    [0 , 0],
+    [1 , 1],
+    [2 , 4],
+    [3 , 9],
+    [1 , 1]
+]
+#Não é conica, pontos repetidos
+
+X_e0=[
+    [ 160., -272.],
+    [ 240., -360.],
+    [ -48.,   40.],
+    [  30.,  -38.],
+    [   0.,    0.]
+]
+#[10, 7, 5, 135, 110, 0]
+
+X_e1=[
+    [-41., -49.],
+    [ 23., -57.],
+    [-41.,  55.],
+    [ 37.,  55.],
+    [ 23.,  63.]
+]
+#[1, 0, 1, 2, -3, -4212]
+
+X_p0=[
+    [ 3., -1.],
+    [ 6., -4.],
+    [21., -9.],
+    [10., -4.],
+    [15., -9.]
+]
+#[2, 4, 8, 0, 1, 0]
+
+X_p1=[
+    [ -3., -16.],
+    [ -3., -21.],
+    [  3.,  -1.],
+    [  1.,  -5.],
+    [ -9., -33.]
+]
+#[18, -6, 2, -56, 19, 174]
+
+X_h0=[
+    [  2.,  -3.],
+    [  0.,   0.],
+    [ 12.,  -9.],
+    [ 14., -12.],
+    [ 12.,  -8.]
+]
+#[0, -1, -2, -6, -5, 0]
+
+X_h1=[
+    [ 2., -2.],
+    [ 4., -3.],
+    [-2., -1.],
+    [ 2.,  3.],
+    [ 8.,  1.]
+]
+#[0, 1, 2, 0, -3, -12]]
+
+from conicas_02 import *
+
+X=conica_aleatorio(tipo="elipse")[0]
+#conica(np.array(X_n0))
+#conica(np.array(X_n1))
+#conica(np.array(X_e0))
+#conica(np.array(X_e1))
+#conica(np.array(X_p0))
+#conica(np.array(X_p1))
+#conica(np.array(X_h0))
+conica(np.array(X))

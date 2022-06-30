@@ -40,7 +40,8 @@ def determinante(A):
     ----------
     Determinante da matriz A.'''
 
-    return type(A[0,0])(prod_diag(escalonamento.triangulariza(A)[0]))
+    T=escalonamento.triangulariza(A)
+    return type(A[0,0])((1-2*(T[2]%2))*prod_diag(T[0])) #T[2] é o número de trocas de linha; O fator (1-2*(T[2]%2)) é 1 se esse número é par; -1 caso contrário.
 #end def
 
 ##########################################

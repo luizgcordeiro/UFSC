@@ -11,10 +11,12 @@ def triangulariza(A,tol=1.0e-10,verbose=False,pivot="partial"):
 
     Saída
     ----------
-    Lista [T,P], em que
+    Lista [T,P,K], em que
     T: Forma escalonada de A.
-    P: lista com os índices das colunas que têm os pivôs de T.'''
+    P: lista com os índices das colunas que têm os pivôs de T.
+    k: número de trocas de linhas que ocorreram durante a triangularização.'''
 
+    troca_de_linhas=0;
     if verbose:
       def verboseprint(s='',end='\n'):
         print(s,end)
@@ -62,6 +64,8 @@ def triangulariza(A,tol=1.0e-10,verbose=False,pivot="partial"):
                 B[p,:]=B[numero_de_pivos,:]#.copy() já é feito automaticamente
                 B[numero_de_pivos,:]=l
                 verboseprint(B)
+
+                troca_de_linhas+=1;
             #end if
 
             #Pivoteia abaixo
@@ -85,7 +89,7 @@ def triangulariza(A,tol=1.0e-10,verbose=False,pivot="partial"):
         j+=1
     #end while
 
-    return [B,posicao_pivos]
+    return [B,posicao_pivos,troca_de_linhas]
 #end def
 
 
