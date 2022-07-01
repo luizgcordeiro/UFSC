@@ -53,8 +53,11 @@ int main() {
 }
 
 /*
-    Section 2.1
+    I. FOUNDATIONS
 */
+
+/*
+    1. The Role of Al
 void print_int_vector(int * v, int n) {
     printf("[");
     int i;

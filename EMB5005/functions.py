@@ -1,9 +1,7 @@
 import numpy as np
 
 def matrix_to_latex(A,begin="\\begin{bmatrix}",end="\\end{bmatrix}"):
-    """Converts a numpy matrix to LaTeX code.
-    
-    Returns LaTeX code for matrix A
+    """Returns LaTeX code for matrix A
 
     Parameters
     ----------
@@ -320,4 +318,27 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
         S+="\n\\end{align*}"
     #end if write_latex
     return [T,P,S,X]
+#end def
+
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+
+def prod_vec(x,y):
+    """Calculates vector product of two three-dimensional vectors.
+
+    Parameters
+    ----------
+    x , y : 1-dimensional array-like of size 3
+
+    Output
+    ------
+    prod_vec : 1-dimensional array-like of size 3
+        Vector product of x and y
+    """
+
+    return np.array([x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]])
 #end def
