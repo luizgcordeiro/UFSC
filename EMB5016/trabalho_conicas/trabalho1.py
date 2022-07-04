@@ -569,14 +569,14 @@ def trabalho1_int(X,verbose=False,tol=1.0e-10,plot=True):
     #end for
 
     plt.title(
-      valores_coefs[0] + " determinada pela equacao\n" +
-      ((str(round(A,2)) +"x^2") if abs(A)>tol else "")\
+      valores_coefs[0] + " determinada pela equacao\n"
+      + ((str(round(A,2)) +"x^2") if abs(A)>tol else "")\
       + (((" + " if B>0 else " - ") + "2*" + str(abs(round(B,2))) + "xy") if abs(B)>tol else "")\
       + (((" + " if C>0 else " - ") + str(abs(round(C,2))) + "y^2") if abs(C)>tol else "")\
       + (((" + " if D>0 else " - ") + "2*" + str(abs(round(D,2))) + "x") if abs(D)>tol else "")\
       + (((" + " if E>0 else " - ") + "2*" + str(abs(round(E,2))) + "y") if abs(E)>tol else "")\
       + (((" + " if F>0 else " - ") + str(abs(round(F,2)))) if abs(F)>tol else "")\
-      + " = 0"
+      + " = 0."
     )
     plt.show()
   #end if
