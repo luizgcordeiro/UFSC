@@ -332,7 +332,7 @@ X_h1=[
 ]
 #[0, 1, 2, 0, -3, -12]]
 
-from conicas_02 import *
+from conicas_01 import *
 
 X=conica_aleatorio(tipo="elipse")[0]
 #conica(np.array(X_n0))
@@ -342,4 +342,4 @@ X=conica_aleatorio(tipo="elipse")[0]
 #conica(np.array(X_p0))
 #conica(np.array(X_p1))
 #conica(np.array(X_h0))
-conica(np.array(X))
+conica(np.matrix(X_p1),b)
