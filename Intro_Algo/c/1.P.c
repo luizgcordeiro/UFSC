@@ -4,7 +4,7 @@
     size n of a problem that can besolvedin time t, assuming that the algorithm to
     solve the problem takes f(n) microseconds.
 
-    We assume 30 days in a month, 365 days in a year. the tabl
+    We assume 30 days in a month, 365 days in a year. Note that 1 sec=10^6 microseconds.
 
                 ---------- ------------ ------------- -------------- --------------- ---------------- -----------------   
                | 1 sec    | 1 min      | 1 hour      | 1 day        | 1 month       | 1 year         | 1 century       |
@@ -19,8 +19,7 @@
     | n!*      | 9        | 11         | 12          | 13           | 15            | 16             | 17              |
      ---------- ---------- ------------ ------------- -------------- --------------- ---------------- -----------------
 
-    Note that 1 sec=10^6 microseconds.
-    *Vide programa abaixo
+    *See code below for how these rows were obtained
 */
 
 #include <stdio.h>
