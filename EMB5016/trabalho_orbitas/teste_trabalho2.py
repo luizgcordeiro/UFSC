@@ -1,18 +1,16 @@
 import numpy as np
+import matplotlib.pyplot as plt
 import funcoes_teste
-import trabalho1
 import sys
 
-def orbita_aleatorio(tipo='',passo=1,dias=10,lim=3,integer=True,verbose=False,through_zero=False):
-  '''Cria aleatoriamente 5 pontos do plano cartesiano que determinam uma cônica.
+def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,through_zero=False):
+  '''Cria aleatoriamente uma quantidade de pontos do plano que denotam a orbita de um corpo celeste.
   
     Parâmetros
     ----------
     tipo : string
-        Tipo da conica a ser criada. Deve ser "parabola", "elipse" ou "hiperbole".
-        Caso nao se especifique um tipo correto, considera-se "parabola".
-    Passo: float, opcional.
-        Variacao no passo para montagem da orbita. Padrao 1.
+        Tipo da conica a ser criada. Deve ser "parabola" (padrao), "elipse"
+        ou "hiperbole".
     dias : int
         Numero de dias dos quais se tem dados. Padrao 10.
     lim : numero positivo, opcional
@@ -26,24 +24,15 @@ def orbita_aleatorio(tipo='',passo=1,dias=10,lim=3,integer=True,verbose=False,th
 
     Saída
     -----
-    conica_aleatorio : lista [X, Coef]
-        X é uma matriz 5x2 com suas linhas da forma [x,y], em que [x,y] foram
-        os pontos gerados, e Coef=[A,B,C,D,E,F] é uma lista tal que a cônica
-        determinada pelos pontos de X é descrita pela equação
-        Ax²+2Bxy+Cy²+2Dx+2Ey+F=0.
-
-    Observacoes
-    -----------
-    O procedimento utilizado é:
-    -Escolhem-se 5 valores para x aleatoriamente dentre os inteiros entre
-        -lim e lim (exceto 0).
-    -Para os pontos especificados acima, conforme o tipo de cônica escolhida,
-        são tomados pontos de certas "cônicas padrão", conforme o tipo especificado
-        --(x,x^2) da parábola x^2-y=0.
-        --(x,1/x) da hipérbole xy-1=0.
-        --Alguns val ores padrao para a elipse x^2+y^2=65^2
-    -Aplica-se uma função afim inversível nestes pontos.
-    -As imagens dos pontos vão pertencer à imagem da "cônica padrão" por esta função.
+    orbita_aleatorio : lista [X, Coef]
+        X : array-like de dimensão 2
+          Tem o mesmo numero de linhas que o parametro 'dias'. Cada linha
+          é um array de tamanho 2, da forma [x,y]. Esses pontos sao aproximacoes
+          (com pequenos erros, para melhor simular uma situacao real) de pontos
+          da orbita de um objeto celeste sob a acao da gravidade
+        Coef : array [A,B,C,D,E,F]
+          Lista tal que a órbita real e descrita pela equação
+          Ax²+2Bxy+Cy²+2Dx+2Ey+F=0.
     '''
 
   if verbose:
@@ -56,55 +45,48 @@ def orbita_aleatorio(tipo='',passo=1,dias=10,lim=3,integer=True,verbose=False,th
     #end def
   #end if
 
-  lista_de_x=np.zeros(dias)
+  x=-np.random.random()#numero entre -1 e 0
 
   if tipo=='hiperbole':
-    lista_de_x[0]=50*np.random.random()+1.0e-8
 
-    def F(alpha):
-      return 1/alpha
+    lista_de_x[0]*=np.random.choice([-1,1])
+    #hiperbole y^2-x^2=1
+    def FUNCAO(alpha):
+      return np.sqrt(dias**2+1)
     #end def
 
     r=1
     #end for
-    #No caso específico da hipérbole xy-r=0, podemos tomar A=0, B=1, C=D=E=0, F=-2r.
-    A=0
-    B=1
-    C=0
+    A=-1
+    B=0
+    C=1
     D=0
     E=0
-    F=-2*r
+    F=-1
   elif tipo=='elipse':
-    #Encontrar pontos de elipses com coordenadas inteiras é um mais chato, então vamos pegar números específicos
+    #elipse y^2-x^2=1
 
-    verboseprint(
-      'Os números anteriores não são úteis. Vamos montar a matriz com certos pontos na elipse' +'\n'
-      'x²+y²-65²=0'+'\n')
-    
-    
-    lista_de_x[0]=50*np.random.random()-25
-    
-
-    def F(alpha):
-      return np.sqrt((65**2)-(alpha**2))
+    def FUNCAO(alpha):
+      return np.sqrt(1-(alpha**2))
     #end def
 
+    
     A=1
     B=0
     C=1
     D=0
     E=0
-    F=-(65*65)
-  else: 
+    F=-1
+  else: #if tipo="parabola"
     verboseprint(
       'Vamos montar a matriz com os pontos na parábola' +'\n'
-      'x²-y=0'+'\n'
+      'y=x^2 (fica uma proporcao legal com as outras)'+'\n'
       'associados a esses pontos:')
   
-    lista_de_x[0]=50*np.random.random()-25
+    lista_de_x[0]*=np.random.choice([-1,1])
     
-    def F(alpha):
-      return alpha**2
+    def FUNCAO(alpha):
+      return (alpha**2)
     #end def
 
     #No caso específico da parábola x^2-1=0, podemos tomar A=2, B=C=D=0, E=-1, F=0
@@ -117,45 +99,31 @@ def orbita_aleatorio(tipo='',passo=1,dias=10,lim=3,integer=True,verbose=False,th
   #end if-else
 
   ########
-  M=np.matrix(
+  M=np.array(
     [
       [A,B],
       [B,C]
     ]
   ).astype(float)
 
-  n=np.matrix(
+  n=np.array(
     [
       [D,E]
     ]
   )
   ###############
   
-  T=funcoes_teste.matriz_inversivel(ordem=2,li=lim)
+  T=np.random.randint(low=-lim.high=lim,size=(2,2)).astype(float)
 
-  if integer:
-    while abs(round(funcoes_teste.determinante(T)))-1!=0:
-      T=funcoes_teste.matriz_inversivel(ordem=2,li=lim)
-    #end while
-  else:
-    while abs(round(funcoes_teste.determinante(T)))==0:
-      T=funcoes_teste.matriz_inversivel(ordem=2,li=lim)
-    #end while
-  #end if
+  T=np.transpose(T)@T#auto-adjunta positiva, em particular sem -1 como autovalor
+  T=(np.eye(2)-T)@np.linalg.inv(np.eye(2)+T)  #Transformada de Caley; matriz unitária/ortogonal
+  #Multiplica por uma matriz do tipo [[1,-a],[b,1]], com a e b pequenos;
+  #Matriz proxima a identidade, logo nao muda muito de uma isometria, mas um pouco sim.
+  T=np.array([[1, -(1/2)*np.random.random()],[(1/2)*np.random.random(),1]])@T
+  
+  #Arrumar a a versao que passa pelo 0
+  q=np.random.randint(low=-lim,high=lim+1,size=(1,2)).astype(float)
 
-  if through_zero:
-    if tipo=="parabola":
-      #A conica original passa pelo zero
-      q=np.matrix([[0,0]]).astype(float)
-    elif tipo=="elipse":
-      #A conica original passa pelo (25,60)
-      q=(np.matrix([[25,60]]).astype(float))@T
-    elif tipo=="hiperbole":
-      #A conica original passa pelo (1,r)
-      q=(np.matrix([[1,r]]).astype(float))@T
-  else:
-    q=np.matrix(np.random.randint(low=-lim,high=lim+1,size=(1,2))).astype(float)
-  #
   verboseprint(
     'A função afim que vamos aplicar é\n'+
     'x --> xT+q,\n'+
@@ -170,46 +138,24 @@ def orbita_aleatorio(tipo='',passo=1,dias=10,lim=3,integer=True,verbose=False,th
   verboseprint(q)
   
   #Conforme o relatório, para determinar os coeficientes da cônica imagem, devemos calcular algumas matrizes:
-  inversaT=funcoes_teste.inversa_por_escalonamento(T,verbose=False)
-  inversaTestrela=funcoes_teste.transposta(inversaT)
-  Mtil=np.matmul(np.matmul(inversaT,M),inversaTestrela)
-  qtil=np.matmul(q,Mtil)
-  nestrela=np.matmul(n,inversaTestrela)
+  inversaT=np.linalg.inv(T)
+  inversaTestrela=np.transpose(inversaT)
+  Mtil=inversaT@M@inversaTestrela
+  qtil=q@Mtil
+  nestrela=n@inversaTestrela
   ntil=nestrela-qtil
-  Ftil=np.matmul(q,funcoes_teste.transposta(qtil-2*nestrela))[0,0]+F
+  Ftil=q@np.transpose(qtil-2*nestrela)[0,0]+F
 
   #Agora, vamos calcular os pontos da orbita
 
-  pontos_da_orbita=np.zeros(size=(dias,2))
+  pontos_da_orbita=np.zeros([dias,2])
+  #print(lista_de_x[0])
+  #pontos_da_orbita[0]=]
 
-  pontos_da_orbita[0]=np.matrix([[lista_de_x[0],F(lista_de_x[0])]])*T+q
-
-  def dist(A,B):
-    m,n=np.shape(A)
-    d=0
-    for i in range(m):
-      for j in range(n):
-        d+=(A[i,j]-B[i,j])**2
-      #end for
-    #end for
-
-    return np.sqrt(d)
-  #end def
-
-  for i in range(1,dias):
-    novo_x=lista_de_x[i-1]
-    novo_ponto_da_orbita=np.matrix([[novo_x,F(novo_x)]])*T+q
-
-    d=0
-    while d<1:
-      novo_x=lista_de_x[i-1]+(0.2*np.random.random())
-
-      d+=dist(novo_ponto_da_orbita,np.matrix([[novo_x,F(novo_x)]])*T+q)
-      novo_ponto_da_orbita=np.matrix([[novo_x,F(novo_x)]])*T+q
-    #end while
-
-    lista_de_x[i]=novo_x
-    pontos_da_orbita[i]=novo_ponto_da_orbita
+  for i in range(dias):
+    #A primeira entrada e um pouquinho aleatorizada
+    pontos_da_orbita[i]=(np.array([x,FUNCAO(x)])@T)+q
+    x+=1/dias
   #end for
 
   Coef=[Mtil[0,0], Mtil[0,1], Mtil[1,1], ntil[0,0], ntil[0,1], Ftil]
@@ -220,7 +166,13 @@ def orbita_aleatorio(tipo='',passo=1,dias=10,lim=3,integer=True,verbose=False,th
       Coef[i]=round(Coef[i])
     #end for
   #end if
-  
+
   return [pontos_da_orbita,Coef]
 #end def
 
+X=orbita_aleatorio(tipo="elipse",dias=10,passo=1)
+#print(X[0][:,0])
+#print(X[0][:,1])
+print(X[0])
+plt.plot(X[0][:,0],X[0][:,1],'o')
+plt.show()
