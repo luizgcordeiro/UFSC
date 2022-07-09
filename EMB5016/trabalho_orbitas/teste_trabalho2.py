@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import funcoes_teste
 import sys
 
-def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,through_zero=False):
+def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=False,perc_erro=.05):
   '''Cria aleatoriamente uma quantidade de pontos do plano que denotam a orbita de um corpo celeste.
   
     Parâmetros
@@ -15,12 +15,11 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,th
         Numero de dias dos quais se tem dados. Padrao 10.
     lim : numero positivo, opcional
         Utilizado para limitar os numeros intermediaros no algoritmo
-    integer : boolean, opcional
-        Se "True", os resultados valores criados sao todos inteiros.
-        Valor padrao "True"
-    verbose : boolean, opcional
+    verbose : booleanol, opcional
         Imprimir na tela a explicacao do procedimento.
         Valor padrao "True"
+    perc_erro : float em [0,1], opcional
+        Valor maximo para o erro nos pontos criados. Padrao 0.05
 
     Saída
     -----
@@ -49,7 +48,6 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,th
 
   if tipo=='hiperbole':
 
-    lista_de_x[0]*=np.random.choice([-1,1])
     #hiperbole y^2-x^2=1
     def FUNCAO(alpha):
       return np.sqrt(dias**2+1)
@@ -83,8 +81,6 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,th
       'y=x^2 (fica uma proporcao legal com as outras)'+'\n'
       'associados a esses pontos:')
   
-    lista_de_x[0]*=np.random.choice([-1,1])
-    
     def FUNCAO(alpha):
       return (alpha**2)
     #end def
@@ -113,9 +109,8 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,th
   )
   ###############
   
-  T=np.random.randint(low=-lim.high=lim,size=(2,2)).astype(float)
-
-  T=np.transpose(T)@T#auto-adjunta positiva, em particular sem -1 como autovalor
+  T=np.random.randint(low=-lim,high=lim,size=(2,2)).astype(float)
+  T=T-np.transpose(T)#skew-symmetric matrix
   T=(np.eye(2)-T)@np.linalg.inv(np.eye(2)+T)  #Transformada de Caley; matriz unitária/ortogonal
   #Multiplica por uma matriz do tipo [[1,-a],[b,1]], com a e b pequenos;
   #Matriz proxima a identidade, logo nao muda muito de uma isometria, mas um pouco sim.
@@ -144,7 +139,7 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,th
   qtil=q@Mtil
   nestrela=n@inversaTestrela
   ntil=nestrela-qtil
-  Ftil=q@np.transpose(qtil-2*nestrela)[0,0]+F
+  Ftil=(q@np.transpose(qtil-2*nestrela))[0,0]+F
 
   #Agora, vamos calcular os pontos da orbita
 
@@ -154,25 +149,52 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,integer=True,verbose=False,th
 
   for i in range(dias):
     #A primeira entrada e um pouquinho aleatorizada
-    pontos_da_orbita[i]=(np.array([x,FUNCAO(x)])@T)+q
+    pontos_da_orbita[i]=(np.array([x+perc_erro*np.random.random()/dias,FUNCAO(x)])@T)+q
     x+=1/dias
   #end for
 
   Coef=[Mtil[0,0], Mtil[0,1], Mtil[1,1], ntil[0,0], ntil[0,1], Ftil]
 
-  #Se for inteiro, vamos fazer ficar inteiro de fato
-  if integer:
-    for i in range(6):
-      Coef[i]=round(Coef[i])
-    #end for
-  #end if
-
   return [pontos_da_orbita,Coef]
 #end def
 
-X=orbita_aleatorio(tipo="elipse",dias=10,passo=1)
-#print(X[0][:,0])
-#print(X[0][:,1])
-print(X[0])
-plt.plot(X[0][:,0],X[0][:,1],'o')
-plt.show()
+num_par=0
+num_el=0
+num_hip=0
+
+parabolas=[]
+while num_par<1000:
+  num_dias=np.random.choice(list(range(10,100)))
+  X=orbita_aleatorio(tipo="parabola",dias=num_dias,perc_erro=1.0e-3)
+
+  M=np.zeros([num_dias,5])
+  for i in range(num_dias):
+    M[i,0]=X[0][i,0]**2
+    M[i,1]=2*X[0][i,0]*X[0][i,1]
+    M[i,2]=X[0][i,1]**2
+    M[i,3]=2*X[0][i,0]
+    M[i,4]=2*X[0][i,1]
+  #end for
+  #F=(-X[1][5])
+  F=-1
+  [[A],[B],[C],[D],[E]]=F*np.linalg.inv(np.transpose(M)@M)@np.transpose(M)@np.ones([num_dias,1])
+
+  det=np.linalg.det([[A,B],[B,C]])
+  if abs(det)<1.0e-2:
+    num_par+=1
+    parabolas+=[X[0]]
+  #end if
+#end for
+
+parabolas=np.array(parabolas,dtype=object)
+file_to_write=open("parabolicas.npy",'wb')
+np.save(file_to_write,parabolas)
+
+file_to_write.close()
+show_plot=False
+if show_plot:
+  plt.plot(X[0][:,0],X[0][:,1],'o')
+  plt.show()
+#end if
+
+#x=np.load('parabolicas.npy',allow_pickle=True)
