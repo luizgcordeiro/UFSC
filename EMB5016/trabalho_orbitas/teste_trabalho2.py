@@ -4,13 +4,14 @@ import funcoes_teste
 import sys
 
 def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=False,perc_erro=.05):
-  '''Cria aleatoriamente uma quantidade de pontos do plano que denotam a orbita de um corpo celeste.
+  '''Cria aleatoriamente uma quantidade de pontos do plano que retratam
+  a orbita de um corpo celeste.
   
     Parâmetros
     ----------
     tipo : string
-        Tipo da conica a ser criada. Deve ser "parabola" (padrao), "elipse"
-        ou "hiperbole".
+        Tipo da conica a ser criada. Deve ser "parabolica" (padrao), "eliptica"
+        ou "hiperbolica".
     dias : int
         Numero de dias dos quais se tem dados. Padrao 10.
     lim : numero positivo, opcional
@@ -46,14 +47,13 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
 
   x=-np.random.random()#numero entre -1 e 0
 
-  if tipo=='hiperbole':
+  if tipo=='hiperbolica':
 
     #hiperbole y^2-x^2=1
     def FUNCAO(alpha):
-      return np.sqrt(dias**2+1)
+      return np.sqrt(alpha**2+1)
     #end def
 
-    r=1
     #end for
     A=-1
     B=0
@@ -61,7 +61,7 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
     D=0
     E=0
     F=-1
-  elif tipo=='elipse':
+  elif tipo=='eliptica':
     #elipse y^2-x^2=1
 
     def FUNCAO(alpha):
@@ -75,7 +75,7 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
     D=0
     E=0
     F=-1
-  else: #if tipo="parabola"
+  else: #if tipo="parabolica"
     verboseprint(
       'Vamos montar a matriz com os pontos na parábola' +'\n'
       'y=x^2 (fica uma proporcao legal com as outras)'+'\n'
@@ -141,6 +141,7 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
   ntil=nestrela-qtil
   Ftil=(q@np.transpose(qtil-2*nestrela))[0,0]+F
 
+  Coef=[Mtil[0,0], Mtil[0,1], Mtil[1,1], ntil[0,0], ntil[0,1], Ftil]
   #Agora, vamos calcular os pontos da orbita
 
   pontos_da_orbita=np.zeros([dias,2])
@@ -149,7 +150,7 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
 
   for i in range(dias):
     #A primeira entrada e um pouquinho aleatorizada
-    pontos_da_orbita[i]=(np.array([x+perc_erro*np.random.random()/dias,FUNCAO(x)])@T)+q
+    pontos_da_orbita[i]=(np.array([x+perc_erro*np.random.random()/dias,FUNCAO(x+perc_erro*np.random.random()/100)])@T)+q
     x+=1/dias
   #end for
 
@@ -158,14 +159,16 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
   return [pontos_da_orbita,Coef]
 #end def
 
-num_par=0
-num_el=0
-num_hip=0
 
-parabolas=[]
-while num_par<1000:
-  num_dias=np.random.choice(list(range(10,100)))
-  X=orbita_aleatorio(tipo="parabola",dias=num_dias,perc_erro=1.0e-3)
+#HIPERBOLICAS
+hiperbolicas=[]
+num_hip=0
+ruim=0
+while num_hip<1000:
+  num_dias=np.random.choice(list(range(50,100)))
+  X=orbita_aleatorio(tipo="hiperbolica",dias=num_dias,perc_erro=1.0e-2)
+  while abs(X[1][5])<.5:
+    X=orbita_aleatorio(tipo="hiperbolica",dias=num_dias,perc_erro=1.0e-2)
 
   M=np.zeros([num_dias,5])
   for i in range(num_dias):
@@ -177,20 +180,108 @@ while num_par<1000:
   #end for
   #F=(-X[1][5])
   F=-1
-  [[A],[B],[C],[D],[E]]=F*np.linalg.inv(np.transpose(M)@M)@np.transpose(M)@np.ones([num_dias,1])
+
+  [A,B,C,D,E]=np.linalg.lstsq(M,-np.ones(num_dias),rcond=None)[0]
 
   det=np.linalg.det([[A,B],[B,C]])
-  if abs(det)<1.0e-2:
-    num_par+=1
-    parabolas+=[X[0]]
+  if det<-1.0e-3:
+    num_hip+=1
+    hiperbolicas+=[X[0]]
+  else:
+    ruim+=1
+    #plt.plot(X[0][:,0],X[0][:,1],'o')
+    #plt.show()
   #end if
-#end for
 
-parabolas=np.array(parabolas,dtype=object)
-file_to_write=open("parabolicas.npy",'wb')
-np.save(file_to_write,parabolas)
+#end for
+print("Hiperbolicas: " + str(ruim) + " ruins.")
+
+hiperbolicas=np.array(hiperbolicas,dtype=object)
+file_to_write=open("hiperbolicas.npy",'wb')
+np.save(file_to_write,hiperbolicas)
 
 file_to_write.close()
+
+####PARABOLICAS
+parabolicas=[]
+ruim=0
+num_par=0
+while num_par<1000:
+  num_dias=np.random.choice(list(range(50,100)))
+  X=orbita_aleatorio(tipo="parabolica",dias=num_dias,perc_erro=1.0e-2)
+  while abs(X[1][5])<.5:
+    X=orbita_aleatorio(tipo="parabolica",dias=num_dias,perc_erro=1.0e-2)
+
+  M=np.zeros([num_dias,5])
+  for i in range(num_dias):
+    M[i,0]=X[0][i,0]**2
+    M[i,1]=2*X[0][i,0]*X[0][i,1]
+    M[i,2]=X[0][i,1]**2
+    M[i,3]=2*X[0][i,0]
+    M[i,4]=2*X[0][i,1]
+  #end for
+  #F=(-X[1][5])
+  F=-1
+
+  [A,B,C,D,E]=np.linalg.lstsq(M,-np.ones(num_dias),rcond=None)[0]
+
+  det=np.linalg.det([[A,B],[B,C]])
+  if abs(det)<1.0e-3:
+    num_par+=1
+    parabolicas+=[X[0]]
+  else:
+    ruim+=1
+  #end if
+#end for
+print("Parabolicas: " + str(ruim) + " ruins.")
+
+parabolicas=np.array(parabolicas,dtype=object)
+file_to_write=open("parabolicas.npy",'wb')
+np.save(file_to_write,parabolicas)
+
+file_to_write.close()
+
+#ELIPTICAS
+elipticas=[]
+ruim=0
+num_el=0
+while num_el<1000:
+  num_dias=np.random.choice(list(range(50,100)))
+  X=orbita_aleatorio(tipo="eliptica",dias=num_dias,perc_erro=1.0e-2)
+  while abs(X[1][5])<.5:
+    X=orbita_aleatorio(tipo="eliptica",dias=num_dias,perc_erro=1.0e-2)
+
+  M=np.zeros([num_dias,5])
+  for i in range(num_dias):
+    M[i,0]=X[0][i,0]**2
+    M[i,1]=2*X[0][i,0]*X[0][i,1]
+    M[i,2]=X[0][i,1]**2
+    M[i,3]=2*X[0][i,0]
+    M[i,4]=2*X[0][i,1]
+  #end for
+  #F=(-X[1][5])
+  F=-1
+
+  [A,B,C,D,E]=np.linalg.lstsq(M,-np.ones(num_dias),rcond=None)[0]
+
+  det=np.linalg.det([[A,B],[B,C]])
+  if abs(det)>1.0e-3:
+    num_el+=1
+    elipticas+=[X[0]]
+  else:
+    ruim+=1
+  #end if
+
+#end for
+print("Elipticas: " + str(ruim) + " ruins.")
+
+elipticas=np.array(elipticas,dtype=object)
+file_to_write=open("elipticas.npy",'wb')
+np.save(file_to_write,elipticas)
+
+file_to_write.close()
+
+
 show_plot=False
 if show_plot:
   plt.plot(X[0][:,0],X[0][:,1],'o')
