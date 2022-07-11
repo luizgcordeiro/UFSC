@@ -1,3 +1,4 @@
+from re import M
 import numpy as np
 
 def crout(A):
@@ -6,7 +7,7 @@ def crout(A):
     L=np.matrix(np.zeros([n,n])).astype(float)
     U=np.matrix(np.zeros([n,n])).astype(float)
 
-    for i in range(n):
+    for i in range(n):  for i=1:n
         U[i,i]=1
     #end for
 
