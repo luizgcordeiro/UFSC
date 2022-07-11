@@ -415,64 +415,97 @@ print("Vamos criar as chaves publica e privada")
 
 tempo_inicial=time.time()
 ppp=1000000
-#primos_pequenos=criar_primos(ppp)
+primos_pequenos=np.load("primos_pequenos.npy")#criar_primos(ppp)
+#np.save("primos_pequenos.npy",primos_pequenos)
+while False:
+    p=random.choice(primos_pequenos[int(0.9*ppp):])
+    q=random.choice(primos_pequenos[int(0.8*ppp):int(0.9*ppp)])
+    #p=primo_grande(24)
+    #q=primo_grande(24)
+    m=p*q
 
-#p=random.choice(primos_pequenos[int(0.9*ppp):])
-#q=random.choice(primos_pequenos[int(0.8*ppp):int(0.9*ppp)])
-p=primo_grande(24)
-q=primo_grande(24)
-m=p*q
+    e=random.choice(primos_pequenos[:1000])
+    #end while
+    #chave publica (m,e)
+    d=bezout(e,(p-1)*(q-1))[1]%((p-1)*(q-1))
 
-e=1
-while e==1:
-    e=np.random.randint((p-q)*(q-1))
-    mdc=bezout(e,(p-1)*(q-1))[0]
-    e=e//mdc
+    #d=chave privada
+    tempo_chaves=time.time()-tempo_inicial
+
+    mensagem="TODAS AS MENSAGENS PODEM SER CODIFICADAS"
+
+    tempo_inicial=time.time()
+    mensagem_codificada=codificar_rsa(p,q,e,mensagem)
+    tempo_cod=time.time()-tempo_inicial
+
+    print("Os primos escolhidos foram")
+    print("    p="+str(p))
+    print("e")
+    print("    q="+str(q))
+    print("O modulo e")
+    print("    m=p*q="+str(m))
+    print("A chave publica e")
+    print("    e="+str(e))
+    print("A chave privada e")
+    print("    d="+str(d))
+    print("Para criar as chaves, foram gastos")
+    print(str(tempo_chaves) + " segundos")
+    print("====================")
+    print("\nA mensagem e")
+    print("    \"" + mensagem + "\"")
+    print("====================")
+    print("A mensagem codificada e")
+    print("    " + str(mensagem_codificada))
+    print("Para codificar a mensagem, foram gastos")
+    print(str(tempo_cod) + " segundos")
+    print("====================")
+    tempo_inicial=time.time()
+    mensagem_descodificada=descodificar_rsa(m,d,mensagem_codificada)
+    tempo_desc=time.time()-tempo_inicial
+    print("A mensagem descodificada e")
+    print("    " + mensagem_descodificada)
+    print("Para descodificar a mensagem, foram gastos")
+    print(str(tempo_desc) + " segundos")
+    print("====================")
+    tempo_inicial=time.time()
+    #mensagem_hackeada=hacker_rsa(m,e,mensagem_codificada)
+    tempo_hack=time.time()-tempo_inicial
+    print("A mensagem hackeada e")
+    print("    " + mensagem_hackeada)
+    print("Para hackear a mensagem, foram gastos")
+    print(str(tempo_hack) + " segundos")
 #end while
-#chave publica (m,e)
-d=bezout(e,(p-1)*(q-1))[1]%((p-1)*(q-1))
-#d=chave privada
-tempo_chaves=time.time()-tempo_inicial
 
-mensagem="TODAS AS MENSAGENS PODEM SER CODIFICADAS"
+print("====================")
+#Primos com n digitos: [x for x in primos_pequenos if 10**n<=x <10**(n+1)]
 
-tempo_inicial=time.time()
-mensagem_codificada=codificar_rsa(p,q,e,mensagem)
-tempo_cod=time.time()-tempo_inicial
+p=np.zeros(100)
+q=np.zeros(100)
 
-print("Os primos escolhidos foram")
-print("    p="+str(p))
-print("e")
-print("    q="+str(q))
-print("O modulo e")
-print("    m=p*q="+str(m))
-print("A chave publica e")
-print("    e="+str(e))
-print("A chave privada e")
-print("    d="+str(d))
-print("Para criar as chaves, foram gastos")
-print(str(tempo_chaves) + " segundos")
-print("====================")
-print("\nA mensagem e")
-print("    \"" + mensagem + "\"")
-print("====================")
-print("A mensagem codificada e")
-print("    " + str(mensagem_codificada))
-print("Para codificar a mensagem, foram gastos")
-print(str(tempo_cod) + " segundos")
-print("====================")
-tempo_inicial=time.time()
-mensagem_descodificada=descodificar_rsa(m,d,mensagem_codificada)
-tempo_desc=time.time()-tempo_inicial
-print("A mensagem descodificada e")
-print("    " + mensagem_descodificada)
-print("Para descodificar a mensagem, foram gastos")
-print(str(tempo_desc) + " segundos")
-print("====================")
-tempo_inicial=time.time()
-mensagem_hackeada=hacker_rsa(m,e,mensagem_codificada)
-tempo_hack=time.time()-tempo_inicial
-print("A mensagem hackeada e")
-print("    " + mensagem_hackeada)
-print("Para hackear a mensagem, foram gastos")
-print(str(tempo_hack) + " segundos")
+tempo=np.zeros(13)
+
+for tamanho in range(12,13):
+
+    n=tamanho//2
+    m=tamanho-n
+    primos_n=[x for x in primos_pequenos if 10**n<=x <10**(n+1)]
+    primos_m=[x for x in primos_pequenos if 10**m<=x <10**(m+1)]
+    for i in range(4):
+        p[i]=np.random.choice(primos_n)
+        q[i]=p[i]
+        while q[i]==p[i]:
+            q[i]=np.random.choice(primos_m)
+        #end while
+    #end for
+
+    time_inicial=time.time()
+
+    for i in range(1):
+        fatorar(p[i]*q[i])
+    #end for
+    tempo[tamanho]=time.time()-time_inicial
+    tempo[tamanho]/=1
+    print("tamanho " + str(tamanho) + ":"+ str(tempo[tamanho]) + " segundos")
+print(tempo)
+#984770904450021093547
+
