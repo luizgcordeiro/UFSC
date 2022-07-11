@@ -68,7 +68,7 @@ void print_int_vector(int * v, int n) {
 
     return;
 }
-
+*/
 void insertion_sort(int * v , int n) {
     /*
         Insertion sort algorithm.
