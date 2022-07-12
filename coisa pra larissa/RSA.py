@@ -482,15 +482,35 @@ print("====================")
 p=np.zeros(100)
 q=np.zeros(100)
 
-tempo=np.zeros(13)
+tempo=np.zeros(20)
+b=np.array(0)
 
-for tamanho in range(12,13):
+for tamanho in range(6,11):
+    if tamanho==6:
+        A=np.array([[6,1]])
+    else:
+        A=np.concatenate([A,[[tamanho,1]]])
+    #end
+    print("Testando tamanho "+str(tamanho))
+
+    if tamanho<12:
+        num_testes=50
+    elif tamanho==12:
+        num_testes=10
+    elif tamanho==13:
+        num_testes=5
+    elif tamanho==14:
+        num_testes=2
+    else:
+        num_testes=1
+    #end if-else
+    
 
     n=tamanho//2
     m=tamanho-n
     primos_n=[x for x in primos_pequenos if 10**n<=x <10**(n+1)]
     primos_m=[x for x in primos_pequenos if 10**m<=x <10**(m+1)]
-    for i in range(4):
+    for i in range(num_testes):
         p[i]=np.random.choice(primos_n)
         q[i]=p[i]
         while q[i]==p[i]:
@@ -500,12 +520,29 @@ for tamanho in range(12,13):
 
     time_inicial=time.time()
 
-    for i in range(1):
+    for i in range(num_testes):
         fatorar(p[i]*q[i])
     #end for
     tempo[tamanho]=time.time()-time_inicial
-    tempo[tamanho]/=1
+    tempo[tamanho]/=num_testes
     print("tamanho " + str(tamanho) + ":"+ str(tempo[tamanho]) + " segundos")
-print(tempo)
+    if tamanho==6:
+        b=np.array([np.log2(tempo[tamanho])])
+    else:
+        b=np.concatenate([b,[np.log2(tempo[tamanho])]])
+    #end
 #984770904450021093547
 
+#tamanho 4:0.0 segundos
+#tamanho 5:0.0 segundos
+#tamanho 6:0.004686379432678222 segundos
+#tamanho 7:0.004686379432678222 segundos
+#tamanho 8:0.050209450721740725 segundos
+#tamanho 9:0.06416759490966797 segundos
+#tamanho 10:0.9779461860656739 segundos
+#tamanho 11:1.2196856021881104 segundos
+#tamanho 12:11.136761736869811 segundos
+#tamanho 13:31.86756761074066 segundos
+#tamanho 14:79.98657655715942 segundos
+
+X=np.linalg.lstsq(A,b)
