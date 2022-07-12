@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 def criar_primos(n):
-    '''Cria uma lista com n primos'''
+    '''Cria uma lista com os primos <n.'''
 
     primos=list(range(n))
     primos[:4]=[2,3,5,7]
@@ -11,7 +11,7 @@ def criar_primos(n):
 
     ind_maior=0
     numero_a_checar=9
-    while len_primos<n:
+    while numero_a_checar<n:
         #encontra o maior primo<=sqrt(numero_a_checar)
         while primos[ind_maior+1]**2<=numero_a_checar:
             ind_maior+=1
@@ -34,7 +34,7 @@ def criar_primos(n):
         numero_a_checar+=2
     #end while
 
-    return primos
+    return primos[:len_primos]
 #end def
 
 def miller_rabin(n,t=1):
@@ -414,9 +414,10 @@ print("====================")
 print("Vamos criar as chaves publica e privada")
 
 tempo_inicial=time.time()
-ppp=1000000
-primos_pequenos=np.load("primos_pequenos.npy")#criar_primos(ppp)
-#np.save("primos_pequenos.npy",primos_pequenos)
+ppp=pow(10,8)
+#primos_pequenos=np.load("primos_pequenos.npy")
+primos_pequenos=criar_primos(ppp)
+np.save("primos_pequenos.npy",primos_pequenos)
 while False:
     p=random.choice(primos_pequenos[int(0.9*ppp):])
     q=random.choice(primos_pequenos[int(0.8*ppp):int(0.9*ppp)])
@@ -485,7 +486,7 @@ q=np.zeros(100)
 tempo=np.zeros(20)
 b=np.array(0)
 
-for tamanho in range(6,11):
+for tamanho in range(6,17):
     if tamanho==6:
         A=np.array([[6,1]])
     else:
@@ -496,20 +497,20 @@ for tamanho in range(6,11):
     if tamanho<12:
         num_testes=50
     elif tamanho==12:
-        num_testes=10
+        num_testes=20
     elif tamanho==13:
-        num_testes=5
+        num_testes=10
     elif tamanho==14:
-        num_testes=2
+        num_testes=5
     else:
-        num_testes=1
+        num_testes=2
     #end if-else
     
 
     n=tamanho//2
     m=tamanho-n
-    primos_n=[x for x in primos_pequenos if 10**n<=x <10**(n+1)]
-    primos_m=[x for x in primos_pequenos if 10**m<=x <10**(m+1)]
+    primos_n=[x for x in primos_pequenos if 10**(n-1)<=x <10**(n)]
+    primos_m=[x for x in primos_pequenos if 10**(m-1)<=x <10**(m)]
     for i in range(num_testes):
         p[i]=np.random.choice(primos_n)
         q[i]=p[i]
@@ -546,3 +547,39 @@ for tamanho in range(6,11):
 #tamanho 14:79.98657655715942 segundos
 
 X=np.linalg.lstsq(A,b)
+
+a=2**(X[0][0])
+c=X[0][1]/X[0][0]
+
+print("A funcao a^(n+c) que melhor aproxima o tempo em segundos e")
+print("a="+str(a))
+print("c="+str(c))
+
+Testando tamanho 6
+tamanho 6:0.0002571630477905273 segundos
+Testando tamanho 7
+tamanho 7:0.0008454513549804687 segundos
+Testando tamanho 8
+tamanho 8:0.0042811441421508785 segundos
+Testando tamanho 9
+tamanho 9:0.006116752624511719 segundos
+Testando tamanho 10
+tamanho 10:0.11091173648834228 segundos
+Testando tamanho 11
+tamanho 11:0.1542264699935913 segundos
+Testando tamanho 12
+tamanho 12:2.0232506513595583 segundos
+Testando tamanho 13
+tamanho 13:2.7156002521514893 segundos
+Testando tamanho 14
+tamanho 14:47.412876510620116 segundos
+Testando tamanho 15
+tamanho 15:56.22416830062866 segundos
+Testando tamanho 16
+tamanho 16:1114.9962114095688 segundos
+/home/luiz/github/UFSC-1/coisa pra larissa/RSA.py:549: FutureWarning: `rcond` parameter will change to the default of machine precision times ``max(M, N)`` where M and N are the input matrix dimensions.
+To use the future default and silence this warning we advise to pass `rcond=None`, to keep using the old, explicitly pass `rcond=-1`.
+  X=np.linalg.lstsq(A,b)
+A funcao a^(n+c) que melhor aproxima o tempo em segundos e
+a=4.43566239133129
+c=-11.81478845773259
