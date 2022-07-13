@@ -416,7 +416,11 @@ print("Vamos criar as chaves publica e privada")
 tempo_inicial=time.time()
 ppp=pow(10,8)
 #primos_pequenos=np.load("primos_pequenos.npy")
+
+tempo_inicial=time.time()
 primos_pequenos=criar_primos(ppp)
+tempo=time.time()-tempo_inicial
+print(tempo)
 np.save("primos_pequenos.npy",primos_pequenos)
 while False:
     p=random.choice(primos_pequenos[int(0.9*ppp):])
@@ -583,3 +587,4 @@ To use the future default and silence this warning we advise to pass `rcond=None
 A funcao a^(n+c) que melhor aproxima o tempo em segundos e
 a=4.43566239133129
 c=-11.81478845773259
+
