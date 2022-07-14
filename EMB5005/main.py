@@ -3,16 +3,46 @@ import time
 
 from functions import *
 
-A=np.random.randint(low=-2,high=5,size=(4,4))
-#A=np.array([[1,2,-3,4],[1,-4,2,-1]])
+X=np.random.randint(low=-3,high=3,size=3)
+print("X="+str(X))
+
+n=np.array([0,0,0])
+
+while norm(n)<.1:#Faz enquanto a distance de X à reta r for zero
+    n=np.random.randint(low=-3,high=3,size=3)
+#end while
+
+m=np.array([0,0,0])
+
+while norm(prod_vec(n,m))<.1:#Faz enquanto a distance de X à reta r for zero
+    m=np.random.randint(low=-3,high=3,size=3)
+#end while
 
 
 
-#X=triangularization(A,pivoting="integer",verbose=True,write_latex=True,index_start=1,\
-#    #latex_begin="\\begin{amatrix}{3}{1}",latex_end="\\end{amatrix}"
-#    )
+print("X="+str(X))
 
-X=np.array([1,-4,3])
-Y=np.array([-2,-4,3])
+a=n[0]
+b=n[1]
+c=n[2]
+d=-dot_product(n,X)
 
-print(prod_vec(X,Y))
+print(a)
+print(b)
+print(c)
+print(d)
+
+at=m[0]
+bt=m[1]
+ct=m[2]
+dt=-dot_product(m,X)
+
+print(at)
+print(bt)
+print(ct)
+print(dt)
+
+print("dist(P,pi)=")
+print(expression_dist_plane(a,b,c,d))
+print("dist(P,nu)=")
+print(expression_dist_plane(at,bt,ct,dt))
