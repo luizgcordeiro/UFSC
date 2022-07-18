@@ -11,7 +11,7 @@ def matrix_to_latex(A,begin="\\begin{bmatrix}",end="\\end{bmatrix}"):
     end : string, optional
         LaTeX code to be put after the matrix code.
 
-    Returns
+    Outputs
     -------
     matrix_to_latex : str
         LaTeX code to write down A.
@@ -56,7 +56,7 @@ def unimodular(m,li=10):
     li : positive number-like, optional
         Soft control on order of entries of output.
 
-    Returns
+    Outputs
     -------
     unimodular : 2-dimensional numpy array with int entries
         Random unimodular matrix of order m.
@@ -126,8 +126,8 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
     latex_start : string, optional
         LaTeX code which will end matrices. Default is "\\end{bmatrix}".
 
-    Returns
-    ----------
+    Putputs
+    -------
     triangularization : list
         Has the form [T,P,S,X], where
             T : array-like of dimension 2
@@ -197,7 +197,7 @@ def triangularization(A,tol=1.0e-10,pivoting="partial",write_latex=False,verbose
 
                 #Pivoteia abaixo
                 for k in range(numero_de_pivos+1,n_linhas):
-                    if abs(True[k,j])>tol:
+                    if abs(T[k,j])>tol:
                         multiplicador=T[k,j]/T[numero_de_pivos,j]
                         T[k,j+1:]=T[k,j+1:]-multiplicador*T[numero_de_pivos,j+1:]
                         T[k,j]=0;
@@ -342,3 +342,126 @@ def prod_vec(x,y):
 
     return np.array([x[1]*y[2]-x[2]*y[1],x[2]*y[0]-x[0]*y[2],x[0]*y[1]-x[1]*y[0]])
 #end def
+
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+
+def dot_product(x,y):
+    """Calculates dot product of vectors x and y.
+
+    Parameters
+    ----------
+    x , y : 1-dimensional array-likes of numbers
+
+    Output
+    ------
+    dot_product : number
+        Dot product of x with y.
+    """
+
+    return np.sum(np.multiply(x,y))
+#end def
+
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+
+def norm(x):
+    """Calculates euclidean norm of a vector x.
+
+    Parameters
+    ----------
+    x : 1-dimensional array-like of numbers
+
+    Output
+    ------
+    norm : number
+        Euclidean norm of x
+    """
+
+    return np.sqrt(dot_product(x,x))
+#end def
+
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+
+def expression_dist_line(Y,V):
+    '''Expression for distance from point (x,y,z) to line passing through Y along V.
+    
+    Parameters
+    ----------
+        Y, V : 1-dimensional array-like of dimension 1 with 3 entries
+            Y is a particular point of the line. V is the direction vector.
+
+    Output
+    ------
+        expression_dist_line : string
+            Expression which yields the distance from a point
+            (x,y,z) to the given line.
+    '''
+
+    return "((y*(" + str(V[2]) + ") - z*(" + str(V[1]) + ")+("+str(-Y[1]*V[2]+Y[2]*V[1])  +"))^2"+\
+"+"+\
+"(z*(" + str(V[0]) +") - x*(" + str(V[2]) +") + (" + str(-Y[2]*V[0]+Y[0]*V[2]) +"))^2"+\
+"+"+\
+"(x*(" + str(V[1]) +") - y*(" + str(V[0]) +") + (" + str(-Y[0]*V[1]+Y[1]*V[0]) +"))^2"+\
+")/("+\
+str(V[0]**2+V[1]**2+V[2]**2)+\
+")"
+
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+
+def expression_dist_point(X):
+    '''Expression for distance from point (x,y,z) to point X.
+    
+    Parameters
+    ----------
+        X : 1-dimensional array-like of dimension 1 with 3 entries.
+
+    Output
+    ------
+        expression_dist_point : string
+            Expression which yields the distance from a point
+            (x,y,z) to X.
+    '''
+
+    return "(x-("  + str(X[0]) + "))^2+(y-("+ str(X[1]) + "))^2+(z-("+str(X[2])+"))^2"
+
+    #############################################
+#############################################
+#############################################
+#############################################
+#############################################
+#############################################
+
+def expression_dist_plane(a,b,c,d):
+    '''Expression for distance from point (x,y,z) to plane ax+by+cz+d=0.
+    
+    Parameters
+    ----------
+        a,b,c,d : numbers
+
+    Output
+    ------
+        expression_dist_point : string
+            Expression which yields the distance from a point
+            (x,y,z) to plane ax+by+cz+d=0.
+    '''
+
+    return "((("+str(a)+")*x+("+str(b)+")*y+("+str(c)+")*z+("+str(d)+"))^2)/("+str(a**2+b**2+c**2)+")"
