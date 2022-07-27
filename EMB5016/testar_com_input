@@ -1,0 +1,14 @@
+import numpy as np
+import sys
+from io import StringIO
+
+old_stdout=sys.stdout
+sys.stdout=StringIO()
+sys.stdin = StringIO(str(2)+"\n"+str(3))
+
+x=int(input("x="))
+y=int(input("y="))
+
+sys.stdout=old_stdout
+
+print(x+y)
