@@ -4,11 +4,18 @@ from io import StringIO
 
 old_stdout=sys.stdout
 sys.stdout=StringIO()
-sys.stdin = StringIO(str(2)+"\n"+str(3))
 
-x=int(input("x="))
-y=int(input("y="))
+XX=np.random.randint(-100,100)
+YY=np.random.randint(-100,100)
+sys.stdin = StringIO(str(XX)+"\n"+str(YY))
+SS=XX+YY
+
+import soma
 
 sys.stdout=old_stdout
 
-print(x+y)
+if (soma.S==SS):
+    print("Sucesso.")
+else:
+    print("Seu programa falhou.")
+#end if-else
