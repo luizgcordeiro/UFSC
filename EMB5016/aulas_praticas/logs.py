@@ -72,3 +72,5 @@ time_end=time.time()
 print(time_end-time_start)
 
 print(log2(1.5)/log2e)
+
+print("log_2(e)="+str(log2e))
