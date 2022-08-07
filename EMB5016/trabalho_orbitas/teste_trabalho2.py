@@ -164,7 +164,7 @@ def orbita_aleatorio(tipo='parabola',dias=10,lim=3,verbose=False,through_zero=Fa
 hiperbolicas=[]
 num_hip=0
 ruim=0
-while num_hip<1000:
+while num_hip<10000:
   num_dias=np.random.choice(list(range(50,100)))
   X=orbita_aleatorio(tipo="hiperbolica",dias=num_dias,perc_erro=1.0e-2)
   while abs(X[1][5])<.5:
@@ -197,7 +197,7 @@ while num_hip<1000:
 print("Hiperbolicas: " + str(ruim) + " ruins.")
 
 hiperbolicas=np.array(hiperbolicas,dtype=object)
-file_to_write=open("hiperbolicas.npy",'wb')
+file_to_write=open("hiperbolicasxxx.npy",'wb')
 np.save(file_to_write,hiperbolicas)
 
 file_to_write.close()
@@ -206,7 +206,7 @@ file_to_write.close()
 parabolicas=[]
 ruim=0
 num_par=0
-while num_par<1000:
+while num_par<10000:
   num_dias=np.random.choice(list(range(50,100)))
   X=orbita_aleatorio(tipo="parabolica",dias=num_dias,perc_erro=1.0e-2)
   while abs(X[1][5])<.5:
@@ -236,7 +236,7 @@ while num_par<1000:
 print("Parabolicas: " + str(ruim) + " ruins.")
 
 parabolicas=np.array(parabolicas,dtype=object)
-file_to_write=open("parabolicas.npy",'wb')
+file_to_write=open("parabolicasxxx.npy",'wb')
 np.save(file_to_write,parabolicas)
 
 file_to_write.close()
@@ -245,7 +245,7 @@ file_to_write.close()
 elipticas=[]
 ruim=0
 num_el=0
-while num_el<1000:
+while num_el<10000:
   num_dias=np.random.choice(list(range(50,100)))
   X=orbita_aleatorio(tipo="eliptica",dias=num_dias,perc_erro=1.0e-2)
   while abs(X[1][5])<.5:
@@ -276,7 +276,7 @@ while num_el<1000:
 print("Elipticas: " + str(ruim) + " ruins.")
 
 elipticas=np.array(elipticas,dtype=object)
-file_to_write=open("elipticas.npy",'wb')
+file_to_write=open("elipticasxxx.npy",'wb')
 np.save(file_to_write,elipticas)
 
 file_to_write.close()
