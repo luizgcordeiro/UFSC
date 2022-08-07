@@ -1,5 +1,3 @@
-import time
-
 def pot(x,n):
     if n<0:
         return 1/pot(x,-n)
@@ -47,29 +45,29 @@ def ln(x):
     
     return l
 
-time_start=time.time()
+#time_start=time.time()
 
-for i in range(1000):
-    ln(1.5)
+#for i in range(1000):
+    #ln(1.5)
 #end for
 
-time_end=time.time()
+#time_end=time.time()
 
-print(time_end-time_start)
+#print(time_end-time_start)
 
-print(ln(1.5))
+#print(ln(1.5))
 
-time_start=time.time()
+#time_start=time.time()
 
-log2e=log2(2.71828182845904523)
+#log2e=log2(2.71828182845904523)
 
-for i in range(1000):
-    log2(1.5)/log2e
+#for i in range(1000):
+    #log2(1.5)/log2e
 #end for
 
-time_end=time.time()
+#time_end=time.time()
 
-print(time_end-time_start)
+#print(time_end-time_start)
 
 print(log2(1.5)/log2e)
 
