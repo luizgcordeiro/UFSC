@@ -1,12 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 //#include <math.h>
+#include <time.h>
 
 void insertion_sort(int * A, int n) {
     //Insertion sort on an integer array of length n
 
     int j;
     for (j=1;j<n;j++) {
-        int key = A[j]
+        int key = A[j];
         int i=j-1;
         while (i>=0 && A[i]>key) {
             A[i+1]=A[i];
@@ -17,6 +19,28 @@ void insertion_sort(int * A, int n) {
     }
 }
 
+void imprimir_vetor_inteiro(int * v , int n) {
+  //Imprime um vetor de inteiros de tamanho n
+
+  printf( "[" );
+  int i;
+  for (i=0;i<n-1;i++) {
+    printf(" %d ,",v[i]);
+  }
+  printf(" %d ]",v[i]);
+  return;
+}
+
+void criar_vetor_inteiro ( int * v , int n ) {
+  /* Cria um vetor inteiro aleatorio de tamanho n e armazena em v*/
+
+  srand(time(NULL));
+
+  for ( int i=0;i<n;i++) {
+    v[i]=rand()%100;
+  }
+  return;
+}
 /*
     2.1-1
     Using Figure2.2 as a model, illustrate the operation of INSERTION-SORT on the
@@ -39,16 +63,44 @@ void insertion_sort(int * A, int n) {
                         ^-----^
 */
 
+
 /*
-    2.1-2
+  2.1-2
+*/
+/*
+    2.1-3
     Rewrite the INSERTION-SORT procedure to sort into nonincreasing instead of non-
     decreasing order.
 
-    Change  "A[i]>key" by "A[i]<key" in line 5
+    Change  "A[i]>key" by "A[i]<key" in line 5. Implementation below.
 */
 
+void ex_2_1_3(int n) {
+    int A[n];
+    criar_vetor_inteiro(A,n);
+
+    printf("O vetor criado e\n");
+    imprimir_vetor_inteiro(A,n);
+
+    int j;
+    for (j=1;j<n;j++) {
+        int key = A[j];
+        int i=j-1;
+        while (i>=0 && A[i]<key) {
+            A[i+1]=A[i];
+            i--;
+        }
+
+        A[i+1]=key;
+  }
+
+  printf("\nO vetor ordenado e\n");
+  imprimir_vetor_inteiro(A,n);
+  return;
+}
+
 /*
-    2.1-3
+    2.1-4
     Consider the searching problem:
     Input: A sequence of n numbers A=<a1,a2,...,an> and a value v
     Output: An index i such that v=A[i] or the special value NIL if v does not
@@ -79,7 +131,7 @@ void insertion_sort(int * A, int n) {
 */
 
 /*
-    2.1-4
+    2.1-5
     Consider the problem of adding two n-bit binary integers, stored in two n-element
     arrays A and B. The sum of the two integers should be stored in binary form in
     an (n+1)-element array C. State the problem formally and write pseudocode for
@@ -111,6 +163,65 @@ void insertion_sort(int * A, int n) {
     17.       //along=0, no need to update
     18. C[i]=along
 
+    Implementation below
+*/
+
+    void ex_2_1_5_1(int n) {
+        srand(time(NULL));
+        //Create two n-sized 0-1 strings  and their sum.
+        int A[n],B[n],C[n+1];
+        for ( int i = 0 ; i<n ; i++) {
+            A[i]=rand()%2;
+            B[i]=rand()%2;
+        }
+
+        //Implement code above; basically copy-paste
+        int along=0;
+        for (int i=0;i<n;i++) {
+            //We have to sum A[i]+B[i]+along and update the result and the new along
+            //We do it without addition
+            if (A[i]==B[i]) {//result will be 00 or 01 (little-endian); either way C[i]=along
+                C[i]=along;
+                if (A[i]==1) { //result was 01
+                    along=1;
+                } else {
+                    along=0;
+                }
+            } else {//A[i] and B[i]  are different: one is 0; other is 1
+                if (along==1) {//A[i]+B[i]+along=01
+                    C[i]=0;
+                } else {//A[i]+B[i]+along=10
+                    C[i]=1;
+                }
+                //along=0, no need to update
+            }
+        }
+
+        C[n]=along;/////
+
+        printf("=============================\n");
+        printf("EXERCISE 2.1.5, first version\n");
+        printf("=============================\n");
+        printf(" ");
+        for (int i=0;i<n;i++) {
+            printf("%d",A[i]);
+        }
+        printf("\n+");
+        for (int i=0;i<n;i++) {
+            printf("%d",B[i]);
+        }
+        printf("\n ");
+        for (int i=0;i<n+1;i++) {
+            printf("_");
+        }
+        printf("\n ");
+
+        for (int i=0;i<n+1;i++) {
+            printf("%d",C[i]);
+        }
+        printf("\n");
+    }
+/*
     The second possibility is summing digit-of-B-by-digit-of-B to A (or vice-versa),
     from left to right.
     1.  C=<A,0>         //Make a copy of A to add digits of B
@@ -120,4 +231,58 @@ void insertion_sort(int * A, int n) {
     6.      while C[j]=1//Go summing 1 along a sequence of 1s
     7.        C[j]=0
     8.        j+=1
-    9.      C[j]=1
+    9.      C[j]=1    
+    */
+
+   void ex_2_1_5_2(int n) {
+        srand(time(NULL));
+        //Create two n-sized 0-1 strings and their sum (first created as a copy of A)
+        int A[n],B[n],C[n+1];
+        for ( int i = 0 ; i<n ; i++) {
+            A[i]=rand()%2;
+            C[i]=A[i];
+            B[i]=rand()%2;
+        }
+        C[n]=0;
+
+        //Implement code above; basically copy-paste
+
+        for (int i=0;i<n;i++) {
+            if (B[i]==1) {
+                int j=i;
+                while (C[j]==1) {
+                    C[j]=0;
+                    j++;
+                }
+                C[j]=1;
+            }
+        }
+
+        printf("==============================\n");
+        printf("EXERCISE 2.1.5, second version\n");
+        printf("==============================\n");
+        printf(" ");
+        for (int i=0;i<n;i++) {
+            printf("%d",A[i]);
+        }
+        printf("\n+");
+        for (int i=0;i<n;i++) {
+            printf("%d",B[i]);
+        }
+        printf("\n ");
+        for (int i=0;i<n+1;i++) {
+            printf("_");
+        }
+        printf("\n ");
+
+        for (int i=0;i<n+1;i++) {
+            printf("%d",C[i]);
+        }
+
+        printf("\n");
+   }
+int main() {
+  ex_2_1_5_2(10);
+  
+  return 0;
+}
