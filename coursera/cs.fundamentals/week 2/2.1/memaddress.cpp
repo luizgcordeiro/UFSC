@@ -16,6 +16,10 @@ int main() {
     foo();
     int q=1;
     std::cout << "Memory address of q: " << &q << std::endl;
+    
+    printf("\nxxx\n.");
+    int * j;
+    printf("%p",&j);
     return 0;
     //comment
 }
