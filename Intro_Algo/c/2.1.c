@@ -43,9 +43,10 @@ void criar_vetor_inteiro ( int * v , int n ) {
 }
 /*
     2.1-1
-    Using Figure2.2 as a model, illustrate the operation of INSERTION-SORT on the
-    array A=<31,41,59,26,41,58.
+    Using Figure 2.2 as a model, illustrate the operation of INSERTION-SORT on the array
+    A=<31,41,59,26,41,58.
 
+    SOLUTION:
     (a)      __
         31  |41|  59  26  41  58
              ^^
@@ -65,23 +66,38 @@ void criar_vetor_inteiro ( int * v , int n ) {
 
 
 /*
-  2.1-2
+    2.1-2
+    Consider the procedure SUM-ARRAY on the facing page. It computes the sum of the n
+    numbers in array A[1,n]. State a loop invariant for this procedure, and use its
+    initialization, maintenance, and termination properties to show that the SUM-ARRAY
+    procedure returns the sum of the numbers in A[1:n].
+
+    SOLUTION:
+    Loop invariant: At the start of the i-th iteration, "sum" stores the sum of A[1:i-1].
+    
+    Initialization: Trivial (vacuous) for i=1.
+    
+    Maintenance: Suppose the invariant was true before the i-th iteration. This means
+        that in line 2 "sum" stores the sum of A[1:i-1]. In line 3, the value A[i] is
+        added to "sum", so now it stores the sum of A[1:i], i.e., of A[1:(i+1)-1]. The
+        loop gets to its end there, so this is the value that "sum" stores at the start
+        of the next iteration, and the loop invariant is preserved.
+    
+    Termination: The loop terminates when i=n+1. Putting this value in the loop
+        invariant we see that "sum" stores the sum of A[1:n], and this is the value that
+        the algorithm returns.
 */
+
 /*
     2.1-3
     Rewrite the INSERTION-SORT procedure to sort into nonincreasing instead of non-
     decreasing order.
 
+    SOLUTION:
     Change  "A[i]>key" by "A[i]<key" in line 5. Implementation below.
 */
 
-void ex_2_1_3(int n) {
-    int A[n];
-    criar_vetor_inteiro(A,n);
-
-    printf("O vetor criado e\n");
-    imprimir_vetor_inteiro(A,n);
-
+void insertion_sort_reversed(int * A, int n) {
     int j;
     for (j=1;j<n;j++) {
         int key = A[j];
@@ -92,13 +108,26 @@ void ex_2_1_3(int n) {
         }
 
         A[i+1]=key;
-  }
-
-  printf("\nO vetor ordenado e\n");
-  imprimir_vetor_inteiro(A,n);
-  return;
+    }
+    return;
 }
 
+void ex_2_1_3(int n) {
+    //Tests solution to exercise 2.1-3
+
+    int A[n];
+    criar_vetor_inteiro(A,n);
+
+    printf("O vetor criado e\n");
+    imprimir_vetor_inteiro(A,n);
+
+    insertion_sort_reversed(A,n);
+
+    printf("\nO vetor ordenado e\n");
+    imprimir_vetor_inteiro(A,n);
+    printf("\n");
+    return;
+}
 /*
     2.1-4
     Consider the searching problem:
@@ -109,25 +138,27 @@ void ex_2_1_3(int n) {
     for v. Using a loop invariant, prove that your algorithm is correct. Make sure that
     your loop invariant fulfills the three necessary properties
 
-    for j=1 to n
-        if v=A[j]
-            return j
-    return NIL
+    SOLUTION:
+    Pseudocode:
+        for j=1 to n
+            if v=A[j]
+                return j
+        return NIL
 
-    Loop invariant: At the start of the j-th iteration, v does not appear in  A[1..j-1]
-    Initialization: Trivial (vacuous) for j=1
+    Loop invariant: At the start of the j-th iteration, v does not appear in  A[1..j-1].
+    Initialization: Trivial (vacuous) for j=1.
     Maintenance: Suppose the invariant was true before the j-th iteration, and that we
-      are at the (j+1)-th iteration. This means that the procedure didn't return during
-      the j-th iteration, i.e., that the condition "v=A[j]" was not true. Thus v is not
-      A[j], nor does it appear in A[1..j-1] (by hypothesis), so it does not appear in
-      A[1..j]=A[1..((j+1)-1)], as desired (the loop invariant at step j+1)
+        are at the (j+1)-th iteration. This means that the procedure didn't return during
+        the j-th iteration, i.e., that the condition "v=A[j]" was not true. Thus v is not
+        A[j], nor does it appear in A[1..j-1] (by hypothesis), so it does not appear in
+        A[1..j]=A[1..((j+1)-1)], as desired (the loop invariant at step j+1)
     Termination: The loop terminates under two possibilities:
-      1st: It returns j, which only happens if "v=A[j]"" evaluates to True at some j.
-        Moreover, "v=A[j']"" does not evaluate to True at any j'<j. So in this case
-        the process actually returns the FIRST index j for which A[j]=v (and not just
-        any such index).
-      2nd: j gets to n+1. The loop invariant then tells us that v does not appear in
-        A[1..n], and the process returns NIL, as desired.
+        1st: It returns j, which only happens if "v=A[j]" evaluates to True at some j.
+            Moreover, "v=A[j']"" does not evaluate to True at any j'<j. So in this case
+            the process actually returns the FIRST index j for which A[j]=v (and not just
+            any such index).
+        2nd: j gets to n+1. The loop invariant then tells us that v does not appear in
+            A[1..n], and the process returns NIL, as desired.
 */
 
 /*
@@ -166,61 +197,32 @@ void ex_2_1_3(int n) {
     Implementation below
 */
 
-    void ex_2_1_5_1(int n) {
-        srand(time(NULL));
-        //Create two n-sized 0-1 strings  and their sum.
-        int A[n],B[n],C[n+1];
-        for ( int i = 0 ; i<n ; i++) {
-            A[i]=rand()%2;
-            B[i]=rand()%2;
-        }
-
-        //Implement code above; basically copy-paste
-        int along=0;
-        for (int i=0;i<n;i++) {
-            //We have to sum A[i]+B[i]+along and update the result and the new along
-            //We do it without addition
-            if (A[i]==B[i]) {//result will be 00 or 01 (little-endian); either way C[i]=along
-                C[i]=along;
-                if (A[i]==1) { //result was 01
-                    along=1;
-                } else {
-                    along=0;
-                }
-            } else {//A[i] and B[i]  are different: one is 0; other is 1
-                if (along==1) {//A[i]+B[i]+along=01
-                    C[i]=0;
-                } else {//A[i]+B[i]+along=10
-                    C[i]=1;
-                }
-                //along=0, no need to update
+void binary_sum_linear (int * A, int * B, int * C , int n) {
+    int along=0;
+    for (int i=0;i<n;i++) {
+        //We have to sum A[i]+B[i]+along and update the result and the new along
+        //We do it without addition
+        if (A[i]==B[i]) {//result will be 00 or 01 (little-endian); either way C[i]=along
+            C[i]=along;
+            if (A[i]==1) { //result was 01
+                along=1;
+            } else {
+                along=0;
             }
+        } else {//A[i] and B[i]  are different: one is 0; other is 1
+            if (along==1) {//A[i]+B[i]+along=01
+                C[i]=0;
+            } else {//A[i]+B[i]+along=10
+                C[i]=1;
+            }
+            //along=0, no need to update
         }
-
-        C[n]=along;/////
-
-        printf("=============================\n");
-        printf("EXERCISE 2.1.5, first version\n");
-        printf("=============================\n");
-        printf(" ");
-        for (int i=0;i<n;i++) {
-            printf("%d",A[i]);
-        }
-        printf("\n+");
-        for (int i=0;i<n;i++) {
-            printf("%d",B[i]);
-        }
-        printf("\n ");
-        for (int i=0;i<n+1;i++) {
-            printf("_");
-        }
-        printf("\n ");
-
-        for (int i=0;i<n+1;i++) {
-            printf("%d",C[i]);
-        }
-        printf("\n");
     }
+
+    C[n]=along;
+    return;
+}
+
 /*
     The second possibility is summing digit-of-B-by-digit-of-B to A (or vice-versa),
     from left to right.
@@ -231,58 +233,101 @@ void ex_2_1_3(int n) {
     6.      while C[j]=1//Go summing 1 along a sequence of 1s
     7.        C[j]=0
     8.        j+=1
-    9.      C[j]=1    
+    9.      C[j]=1  
+
+    Note that this can also be implemented recursively: Perform the procedure
+    under the FOR loop for the first digit; ignore the first digit and repeat.
     */
 
-   void ex_2_1_5_2(int n) {
-        srand(time(NULL));
-        //Create two n-sized 0-1 strings and their sum (first created as a copy of A)
-        int A[n],B[n],C[n+1];
-        for ( int i = 0 ; i<n ; i++) {
-            A[i]=rand()%2;
+void binary_successor_recursive( int * C , int n) {
+    //Substitutes C by its successor mod 2^n, where n is the length of C;
+    //Everything binary.
+    //Recursion FTW (for the win).
+
+    if (n==0) {
+        return;
+    }
+    if (C[0]==0) {
+        C[0]=1;
+        return;
+    } else {
+        C[0]=0;
+        binary_successor_recursive(C+1,n-1);
+        return;
+    }
+}
+void binary_sum_recursive(int * B, int * C , int n) {
+    /*
+        adds B to C (we will not worry about the conditions on
+        B and C which make this code correct);
+    */
+    //Recursive implementation
+
+    if (n==0) {
+        return;
+    }
+    
+    if (*B==1) {
+        binary_successor_recursive(C,n+1);
+    }
+
+    binary_sum_recursive(B+1,C+1,n-1);
+    return;
+}
+
+void ex_2_1_5(int n) {
+    //Tests proposed solution to exercise 2.1-5
+    srand(time(NULL));
+    //Create two n-sized 0-1 strings  and their sum.
+    int A[n],B[n],C[n+1];
+    for ( int i = 0 ; i<n ; i++) {
+        A[i]=rand()%2;
+        B[i]=rand()%2;
+    }
+
+    int option;
+    printf("Which solution to exercise 2.1-5 would you like to test (1 or 2)? ");
+    scanf("%d",&option);
+
+    while (option!=1 && option!=2) {
+        printf("Invalid option. Try again (1 or 2): ");
+        scanf("%d",&option);
+    }
+
+    if (option==1) {
+        binary_sum_linear(A,B,C,n);
+    } else {
+        for (int i=0;i<n;i++) {
             C[i]=A[i];
-            B[i]=rand()%2;
         }
         C[n]=0;
 
-        //Implement code above; basically copy-paste
+        binary_sum_recursive(B,C,n);
+    }
 
-        for (int i=0;i<n;i++) {
-            if (B[i]==1) {
-                int j=i;
-                while (C[j]==1) {
-                    C[j]=0;
-                    j++;
-                }
-                C[j]=1;
-            }
-        }
+    //Print the sum
+    printf(" ");
+    for (int i=0;i<n;i++) {
+        printf("%d",A[i]);
+    }
+    printf("\n+");
+    for (int i=0;i<n;i++) {
+        printf("%d",B[i]);
+    }
+    printf("\n ");
+    for (int i=0;i<n+1;i++) {
+        printf("_");
+    }
+    printf("\n ");
 
-        printf("==============================\n");
-        printf("EXERCISE 2.1.5, second version\n");
-        printf("==============================\n");
-        printf(" ");
-        for (int i=0;i<n;i++) {
-            printf("%d",A[i]);
-        }
-        printf("\n+");
-        for (int i=0;i<n;i++) {
-            printf("%d",B[i]);
-        }
-        printf("\n ");
-        for (int i=0;i<n+1;i++) {
-            printf("_");
-        }
-        printf("\n ");
+    for (int i=0;i<n+1;i++) {
+        printf("%d",C[i]);
+    }
+    printf("\n");
+}
 
-        for (int i=0;i<n+1;i++) {
-            printf("%d",C[i]);
-        }
-
-        printf("\n");
-   }
 int main() {
-  ex_2_1_5_2(10);
+  ex_2_1_5(10);
   
   return 0;
 }

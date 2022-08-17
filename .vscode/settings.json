@@ -44,5 +44,7 @@
         "stdexcept": "cpp",
         "streambuf": "cpp",
         "typeinfo": "cpp"
-    }
+    },
+    "editor.rulers": [80,88,96,104,112    
+    ]
 }
