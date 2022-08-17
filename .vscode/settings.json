@@ -45,6 +45,7 @@
         "streambuf": "cpp",
         "typeinfo": "cpp"
     },
-    "editor.rulers": [80,88,96,104,112    
+    "editor.rulers": [
+        72,76,80,84,88,92,96,100,104,108
     ]
 }
