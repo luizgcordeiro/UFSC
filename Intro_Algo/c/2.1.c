@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include <math.h>
 #include <time.h>
+//#include <stdarg.h> // function arguments
+//#include <math.h> // math
+//#include <string.h>
 
 void insertion_sort(int * A, int n) {
     //Insertion sort on an integer array of length n
@@ -139,7 +141,7 @@ void ex_2_1_3(int n) {
     your loop invariant fulfills the three necessary properties
 
     SOLUTION:
-    Pseudocode:
+        LINEAR SEARCH:
         for j=1 to n
             if v=A[j]
                 return j
