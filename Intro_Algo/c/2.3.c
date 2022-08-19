@@ -77,7 +77,7 @@ int main( int argc , char ** argv ) {
     for (int i=0;i<number;i++) {
         v[i]=malloc(n*sizeof(int));
         create_int_vector(v[i],n);
-        merge_sort(v,0,n-1);
+        merge_sort(v[i],0,n-1);
     }
 
 
