@@ -328,7 +328,7 @@ void ex_2_1_5(int n) {
     printf("\n");
 }
 
-int main() {
+int main( int argc , char ** argv ) {
   ex_2_1_5(10);
   
   return 0;
