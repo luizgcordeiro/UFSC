@@ -67,7 +67,7 @@ void merge_sort ( int * A , int p , int r ) {
     merge(A,p,q,r);
 }
 
-int main( int argc , char ** argv ) {
+/*int main( int argc , char ** argv ) {
     srand(time(NULL));
 
     int n=100000000;
@@ -81,5 +81,34 @@ int main( int argc , char ** argv ) {
     }
 
 
+    return 0;
+}*/
+
+int main() {
+    double N[4];
+    for (int i=0;i<4;i++) {
+        scanf("%lf",N+i);
+    }
+    
+    double media=(2*N[0]+3*N[1]+4*N[2]+N[3])/10;
+    
+    printf("Media: %.1lf\n",media);
+    if (media>=7.0) {
+        printf("Aluno aprovado.\n");
+    } else if (media<5.0) {
+        printf("Aluno reprovado.\n");
+    } else {
+        printf("Aluno em exame.\n");
+        double exame;
+        scanf("%lf",&exame);
+        printf("Nota do exame: %.1lf\n",exame);
+        media=(media+exame)/2;
+        if (media>=5.0) {
+            printf("Aluno aprovado.\n");
+        } else {
+            printf("Aluno reprovado.\n");
+        }
+        printf("Media final: %.1lf\n",media);
+    }
     return 0;
 }
