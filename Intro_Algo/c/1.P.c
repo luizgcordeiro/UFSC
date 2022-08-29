@@ -1,8 +1,8 @@
 /*
     1-1 Comparison of running times
-    For each function f(n) and time t in the following table,determine the largest
-    size n of a problem that can besolvedin time t, assuming that the algorithm to
-    solve the problem takes f(n) microseconds.
+    For each function f(n) and time t in the following table, determine the
+    largest size n of a problem that can besolved in time t, assuming that
+    the algorithm to solve the problem takes f(n) microseconds.
 
     We assume 30 days in a month, 365 days in a year. Note that 1 sec=10^6 microseconds.
 
