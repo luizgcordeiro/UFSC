@@ -12,4 +12,4 @@ for i in range(7):
     print(f"Iteracao {i}: x={x};")
     i+=1
     # Troque a funcao aqui
-    x=g(x,c)
+    x=g(x)
