@@ -1,22 +1,28 @@
 import numpy as np
 
-def triangulariza(A,tol=None,pivot=np.argmax,verbose=False,):
+def pivot_partial (x) : return np.argmax(abs(x))
+
+def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
     '''Triangulariza uma matriz A.
 
     Parametros obrigatorios
     ----------
     A : matriz a ser triangularizada.
+      Deve ser implementada como uma lista de listas ou uma numpy.array
 
     Parametros opcionais
     ----------
-    tol : Opcional. Tolerancia numerica.
+    tol : Float, opcional
+      Tolerancia numerica
       Padrao 2^(-30) vezes a maior entrada de A em valor absoluto.
-    verbose : Opcional. Imprimir informaçoes intermediarias
-    pivot : Opcional. Tipo de pivoteamento
+    verbose : Boolean, opcional
+      Imprimir informaçoes intermediarias
+    pivot : Função
+      Regra de pivoteamento. Opcional.
       Deve ser uma funcao que toma uma lista ou array-like nao-vazia
-      e retorna um indice para essa lista. Por padrao, utiliza np.argmax
-      para retornar o indice de maior valor absoluto e fazer pivoteamento
-      parcial.
+      e retorna um indice para essa lista. Por padrao, utiliza uma
+      funcao que retorna o indice de maior valor absoluto para fazer
+      pivoteamento parcial.
 
     Saida
     ----------
@@ -25,69 +31,77 @@ def triangulariza(A,tol=None,pivot=np.argmax,verbose=False,):
     P : lista com os indices das colunas que tem os pivôs de T.'''
 
     #Faz cópias
-    B=(np.array(A).copy())
-    posicao_pivos=[]
+    T=np.array(A.copy()).astype(float)
+    posicao_pivos = []
     #Grava o tamanho
-    ordem=np.shape(B)
-    n_linhas=ordem[0]
-    n_colunas=ordem[1]
+    n_linhas , n_colunas = np.shape(T)
     #Vê quantos pivôs já foram achados
-    numero_de_pivos=0
+    n_pivos=0
+
+    if tol==None:
+      tol=2**(-30) * np.max(abs(T))
+    #end if
 
     #Linhas na qual trabalharemos
     j=0
 
     if verbose:
       print("Vamos triangularizar a matriz")
-      print(B)
+      print(T)
     #end if
 
-    while (j<n_colunas and numero_de_pivos<n_linhas):
+    while (j<n_colunas and n_pivos<n_linhas):
         if verbose:
           print("=====")
-          print("Vamos pivotear a coluna " + str(j) + ".")
+          print(f"Vamos pivotear a coluna {j}.")
         #end if
 
         #Encontra o pivô
-        p=np.argmax(abs(B[numero_de_pivos:,j]))+numero_de_pivos
+        p=pivot(T[:,n_pivos:])+n_pivos
 
-        if abs(B[p,j])>tol:
-
-            #verboseprint("O pivô da coluna " + str(j) " está na linha " + str(p) + ".")
-
+        if abs(T[p,j])>tol:
             #Encontramos um pivô.
             #Troca linhas caso necessário
-            if p!=numero_de_pivos:
-                verboseprint("Precisamos trocar a linha " + \
-                    str(numero_de_pivos) + " com a linha " + str(p) + ".")
-                l=B[p,:].copy()
-                B[p,:]=B[numero_de_pivos,:]#.copy() já é feito automaticamente
-                B[numero_de_pivos,:]=l
-                verboseprint(B)
+            if p != n_pivos:
+
+                for k in range(j,n_colunas):
+                  temp=T[p,k]
+                  T[p,k]=T[n_pivos,k]
+                  T[n_pivos,k]=temp
+                #end for
+                if verbose:
+                  print(f"Precisamos trocar a linha {n_pivos} com a linha {p}.")
+                  print(T)
+                #end if
+
+                p=n_pivos
             #end if
 
             #Pivoteia abaixo
-            for k in range(numero_de_pivos+1,n_linhas):
-                if abs(B[k,j])>tol:
-                    multiplicador=B[k,j]/B[numero_de_pivos,j]
-                    B[k,j+1:]=B[k,j+1:]-multiplicador*B[numero_de_pivos,j+1:]
-                    B[k,j]=0;
+            for k in range(p+1,n_linhas):
+                if abs(T[k,j])>tol:
+                    multiplicador=T[k,j]/T[p,j]
+                    T[k,j+1:]=T[k,j+1:]-multiplicador*T[p,j+1:]
+                    T[k,j]=0
                 #end if
             #end for
-            verboseprint("Aniquila as entradas abaixo:")
-            verboseprint(B)
+            if verbose:
+              print("Aniquila as entradas abaixo:")
+              print(T)
+            #end if
 
             #Conta o pivô a mais
-            numero_de_pivos+=1
+            n_pivos+=1
             posicao_pivos.append(j)
         else:
-            verboseprint("A coluna " + str(j) + " não tem pivô.")
+            if verbose:
+              print("A coluna {j} nao tem pivo.")
         #end if
         #passa pra próxima coluna
         j+=1
     #end while
 
-    return [B,posicao_pivos]
+    return [T,posicao_pivos]
 #end def
 
 
