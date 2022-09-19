@@ -1,4 +1,5 @@
 import numpy as np
+import sympy as sp
 
 def matrix_to_latex(A,begin="\\begin{bmatrix}",end="\\end{bmatrix}"):
     """Returns LaTeX code for matrix A
