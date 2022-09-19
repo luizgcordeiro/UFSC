@@ -1,33 +1,31 @@
 import numpy as np
 
-def triangulariza(A,tol=1.0e-10,verbose=False,pivot="partial"):
-    '''Esta função triangulariza uma matriz A com pivotação parcial.
+def triangulariza(A,tol=None,pivot=np.argmax,verbose=False,):
+    '''Triangulariza uma matriz A.
 
-    Parâmetros
+    Parametros obrigatorios
     ----------
-    A: matriz a ser triangularizada.
-    tol: tolerância numérica.
-    verbose: Imprimir informações intermediárias
+    A : matriz a ser triangularizada.
 
-    Saída
+    Parametros opcionais
+    ----------
+    tol : Opcional. Tolerancia numerica.
+      Padrao 2^(-30) vezes a maior entrada de A em valor absoluto.
+    verbose : Opcional. Imprimir informaçoes intermediarias
+    pivot : Opcional. Tipo de pivoteamento
+      Deve ser uma funcao que toma uma lista ou array-like nao-vazia
+      e retorna um indice para essa lista. Por padrao, utiliza np.argmax
+      para retornar o indice de maior valor absoluto e fazer pivoteamento
+      parcial.
+
+    Saida
     ----------
     Lista [T,P], em que
-    T: Forma escalonada de A.
-    P: lista com os índices das colunas que têm os pivôs de T.'''
-
-    if verbose:
-      def verboseprint(s='',end='\n'):
-        print(s,end)
-      #end def
-    else:
-      def verboseprint(s='',end='\n'):
-        return
-      #end def
-    #end if
-
+    T : Forma escalonada de A.
+    P : lista com os indices das colunas que tem os pivôs de T.'''
 
     #Faz cópias
-    B=(np.matrix(A).copy()).astype(float)
+    B=(np.array(A).copy())
     posicao_pivos=[]
     #Grava o tamanho
     ordem=np.shape(B)
@@ -39,12 +37,16 @@ def triangulariza(A,tol=1.0e-10,verbose=False,pivot="partial"):
     #Linhas na qual trabalharemos
     j=0
 
-    verboseprint("Vamos triangularizar a matriz")
-    verboseprint(B)
+    if verbose:
+      print("Vamos triangularizar a matriz")
+      print(B)
+    #end if
 
     while (j<n_colunas and numero_de_pivos<n_linhas):
-        verboseprint("=====")
-        verboseprint("Vamos pivotear a coluna " + str(j) + ".")
+        if verbose:
+          print("=====")
+          print("Vamos pivotear a coluna " + str(j) + ".")
+        #end if
 
         #Encontra o pivô
         p=np.argmax(abs(B[numero_de_pivos:,j]))+numero_de_pivos
