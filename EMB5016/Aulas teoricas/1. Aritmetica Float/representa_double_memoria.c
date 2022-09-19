@@ -6,8 +6,8 @@ int main ( int argc , char ** argv) {
 
     char run='S',gravar='S',c,filename[105];
     double num,num_or;
-    int i,j;
-    char sign,exponent[12],mantissa[53],k,p;
+    int i,j,k,p;
+    char sign,exponent[12],mantissa[53];
 
     exponent[11]=0;
     mantissa[52]=0;
@@ -42,17 +42,13 @@ int main ( int argc , char ** argv) {
                 num*=2;
             }
         }
-
         k=p+1023;
-        printf("exponent:%d\n",k);
         for (i=10;i>=0;i--) {
-            printf("exponent:%d\n",k);
             j=k%2;
             exponent[i]='0'+j;
             k-=j;
             k/=2;
         }
-        printf("exponent:%d\n",k);
 
         //Operações bit a bit para lidar com a mantissa
         num-=1;//Tira a parte inteira, faz ser somente a mantissa
@@ -66,9 +62,9 @@ int main ( int argc , char ** argv) {
 
         printf("A representacao em bits desse numero e\n\n");
         printf("%c   ",sign);
-        printf(exponent);
+        printf("%s",exponent);
         printf("   ");
-        printf(mantissa);
+        printf("%s",mantissa);
 
         printf("\n\n");
 
