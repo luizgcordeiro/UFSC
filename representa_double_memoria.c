@@ -7,8 +7,10 @@ int main ( int argc , char ** argv) {
     char run='S',gravar='S',c,filename[105];
     double num,num_or;
     int i,j;
-    int sign,exponent[11],mantissa[52],k,p;
+    char sign,exponent[12],mantissa[53],k,p;
 
+    exponent[11]=0;
+    mantissa[52]=0;
     while (run=='S' || run=='s') {
         printf("==========\n");
         printf("Digite um numero decimal: ");
@@ -20,9 +22,9 @@ int main ( int argc , char ** argv) {
         //Calcular representacao em bits
         //SINAL
         if (num>=0) {
-            sign=0;
+            sign='0';
         } else {
-            sign=1;
+            sign='1';
             num=-num;
         }
 
@@ -42,31 +44,31 @@ int main ( int argc , char ** argv) {
         }
 
         k=p+1023;
+        printf("exponent:%d\n",k);
         for (i=10;i>=0;i--) {
-            exponent[i]=k%2;
-            k-=exponent[i];
+            printf("exponent:%d\n",k);
+            j=k%2;
+            exponent[i]='0'+j;
+            k-=j;
             k/=2;
         }
+        printf("exponent:%d\n",k);
 
         //Operações bit a bit para lidar com a mantissa
         num-=1;//Tira a parte inteira, faz ser somente a mantissa
         for (i=0;i<52;i++) {
             num*=2;
-            mantissa[i]=(int)num%2;
-            if (mantissa[i]==1) {
+            mantissa[i]='0'+((int)num%2);
+            if (mantissa[i]=='1') {
                 num-=1;
             }
         }
 
         printf("A representacao em bits desse numero e\n\n");
-        printf("%d   ",sign);
-        for (i=0;i<11;i++) {
-            printf("%d",exponent[i]);
-        }
+        printf("%c   ",sign);
+        printf(exponent);
         printf("   ");
-        for (i=0;i<52;i++) {
-            printf("%d",mantissa[i]);
-        }
+        printf(mantissa);
 
         printf("\n\n");
 
