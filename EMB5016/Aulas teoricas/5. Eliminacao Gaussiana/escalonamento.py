@@ -7,22 +7,22 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
 
     Parametros obrigatorios
     ----------
-    A : matriz a ser triangularizada.
-      Deve ser implementada como uma lista de listas ou uma numpy.array
+    A : Array-like de dimensão 2
+        Matriz a ser triangularizada.
 
     Parametros opcionais
     ----------
     tol : Float, opcional
-      Tolerancia numerica
-      Padrao 2^(-30) vezes a maior entrada de A em valor absoluto.
+        Tolerancia numerica
+        Padrao 2^(-30) vezes a maior entrada de A em valor absoluto.
     verbose : Boolean, opcional
-      Imprimir informaçoes intermediarias
-    pivot : Função
-      Regra de pivoteamento. Opcional.
-      Deve ser uma funcao que toma uma lista ou array-like nao-vazia
-      e retorna um indice para essa lista. Por padrao, utiliza uma
-      funcao que retorna o indice de maior valor absoluto para fazer
-      pivoteamento parcial.
+        Imprimir informaçoes intermediarias
+    pivot : Funcao, opcional
+         Regra de pivoteamento.
+         Deve ser uma funcao que toma uma lista ou array-like nao-vazia
+         e retorna um indice para essa lista. Por padrao, utiliza uma
+         funcao que retorna o indice de maior valor absoluto para fazer
+         pivoteamento parcial.
 
     Saida
     ----------
@@ -31,7 +31,7 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
     P : lista com os indices das colunas que tem os pivôs de T.'''
 
     #Faz cópias
-    T=np.array(A.copy()).astype(float)
+    T=np.array(A).astype(float)
     posicao_pivos = []
     #Grava o tamanho
     n_linhas , n_colunas = np.shape(T)
@@ -57,8 +57,8 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
         #end if
 
         #Encontra o pivô
-        p=pivot(T[:,n_pivos:])+n_pivos
-
+        p=pivot(T[n_pivos:,j])+n_pivos
+        print(f"p={p}")
         if abs(T[p,j])>tol:
             #Encontramos um pivô.
             #Troca linhas caso necessário
@@ -105,103 +105,141 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
 #end def
 
 
-def retrossubstituicao(A,pospiv=[],tol=1e-10,verbose=False):
-  """Retrossubstituição.
+def retrossubstituicao(A,pospiv=[],tol=None,verbose=False):
+    """Retrossubstituição.
 
-  Parâmetros
-  ----------
-  A: Matriz triangularizada superiormente
-  pospiv (opcional): lista com as posições dos pivôs de A
-  tol: tolerância numérica.
-  verbose: Imprimir informações intermediárias
+    Parametros obrigatorios
+    ----------
+    A : Array-like de dimensao 2
+        Matriz triangularizada superiormente (parcialmente escalonada)
 
-  Saída
-  ----------
-  Lista [R,P], em que:
-  R: Forma completamente escalonada de A.
-  P: Lista com posição dos pivôs de A."""
+    Parametros opcionais
+    ----------
+    pospiv : Array-like de dimensao 1
+        Lista com as posições dos pivôs de A
+    tol : Float, opcional
+        Tolerancia numerica
+        Padrao 2^(-30) vezes a maior entrada de A em valor absoluto.
+    verbose : Boolean, opcional
+        Imprimir informaçoes intermediarias
 
-  if verbose:
-    def verboseprint(s='',end='\n'):
-      print(s,end)
-    #end def
-  else:
-    def verboseprint(s='',end='\n'):
-      return
-    #end def
-  #end if
+    Saída
+    ----------
+    Lista [R,P], em que:
+    R : Forma completamente escalonada de A.
+    P : Lista com posição dos pivôs de A."""
 
-  #Faz as cópias usuais para evitar problemas
-  R=np.matrix(A.copy()).astype(float)
+    #Faz as cópias usuais para evitar problemas
+    R=np.array(A).astype(float)
+    m,n=np.shape(R)
 
-  verboseprint('Vamos fazer retrosubstituição na matriz ',end='')
-  verboseprint(A)
-  verboseprint()
-
-  #caso nao saibamos as posições dos pivos, temos que encontrá-los
-  posicoes_pivos=pospiv
-  if posicoes_pivos==[]:
-    verboseprint('Nâo foi dada a posição dos pivôs da matriz.')
-    verboseprint('Vamos encontrá-los:')
-    i=0
-    j=0
-    while (i<np.shape(R)[0]):
-      while abs(R[i,j])<tol and j<np.shape(R)[1]:
-          j+=1
-      #end while
-
-      if j==np.shape(R)[1]:
-          break
-      else:
-          posicoes_pivos.append(j)
-          i+=1
-      #end if-else
-    #end while
-  #end if
-
-  verboseprint('Os pivôs estao nas colunas ',end='')
-  verboseprint(posicoes_pivos)
-  verboseprint()
-
-  numero_de_pivos=len(posicoes_pivos)
-  for i in range(numero_de_pivos-1,-1,-1):
-    verboseprint('=====')
-    #Normaliza o pivô, caso necessário
-    if abs(R[i,posicoes_pivos[i]]-1)>tol:
-      verboseprint('Vamos normalizar o pivô na linha ' + str(i) + '.')
-      R[i,posicoes_pivos[i]:]=R[i,posicoes_pivos[i]:]/R[i,posicoes_pivos[i]]
-      verboseprint(R)
-      verboseprint()
+    if tol==None:
+        tol=2**(-30) * np.max(abs(R))
     #end if
-    #Aniquila as entradas acima
 
-    verboseprint("Vamos aniquilar as entradas acima do pivô"\
-    + " na posição (" + str(i) +","+str(posicoes_pivos[i])+").")
-    for k in range(i-1,-1,-1):
-      R[k,posicoes_pivos[i]+1:]-=R[k,posicoes_pivos[i]]*R[i,posicoes_pivos[i]+1:]
-      R[k,posicoes_pivos[i]]=0
+    if verbose:
+        print("Vamos fazer retrosubstituição na matriz")
+        print(A)
+    #end if
+
+    #caso nao saibamos as posições dos pivos, temos que encontrá-los
+    if pospiv==[]:
+        if verbose:
+            print('Nâo foi dada a posição dos pivôs da matriz.')
+            print('Vamos encontrá-los:')
+        #end if
+        i=0
+        j=0
+        while (i<m):
+            while abs(R[i,j])<tol and j<n:
+                j+=1
+            #end while
+
+            if j==n:
+                break
+            else:
+                pospiv.append(j)
+                i+=1
+            #end if-else
+        #end while
+    #end if
+
+    if verbose:
+        print(f"Os pivôs estao nas colunas {pospiv}")
+        print()
+    #end if
+    numero_de_pivos=len(pospiv)
+    for i in range(numero_de_pivos-1,-1,-1):
+        if verbose:
+            print('=====')
+        #end if
+        #Normaliza o pivô, caso necessário
+        if abs(R[i,pospiv[i]]-1)>tol:
+            R[i,pospiv[i]+1:]/=R[i,pospiv[i]]
+            R[i,pospiv[i]]=1
+            if verbose:
+                print(f"Vamos normalizar o pivo na linha {i}.")
+                print(R)
+                print()
+            #end if
+        #end if
+
+
+        #Aniquila as entradas acima
+        if verbose:
+            print(f"Vamos aniquilar as entradas acima do pivo na posição ({i},{pospiv[i]}).")
+        #end if
+        for k in range(i-1,-1,-1):
+            R[k,pospiv[i]+1:]-=R[k,pospiv[i]]*R[i,pospiv[i]+1:]
+            R[k,pospiv[i]]=0
+        #end for
+
+        if verbose:
+            print(R)
+        #end if
     #end for
-    verboseprint(R)
-  #end for
 
-  return [R,posicoes_pivos]
+    return [R,pospiv]
 #end function
 
-def escalona(A,tol=1e-10,verbose=False):
-  """Escalonamento.
+def escalona(A,tol=None,pivot=pivot_partial,verbose=False):
+    """
+    Escalonamento.
 
-  Parâmetros
-  ----------
-  A: Matriz
-  tol: tolerância numérica.
-  verbose: Imprimir informações intermediárias
+    Parametros obrigatorios
+    ----------
+    A : Array-like de dimensao 2
+        Matriz triangularizada superiormente (parcialmente escalonada)
 
-  Saída
-  ----------
-  Lista [E,P], em que:
-  E: Forma completamente escalonada de A.
-  P: Lista com posição dos pivôs de A."""
+    Parametros opcionais
+    ----------
+    pivot : Funcao, opcional
+         Regra de pivoteamento.
+         Deve ser uma funcao que toma uma lista ou array-like nao-vazia
+         e retorna um indice para essa lista. Por padrao, utiliza uma
+         funcao que retorna o indice de maior valor absoluto para fazer
+         pivoteamento parcial.
+    pospiv : Array-like de dimensao 1, opcional
+        Lista com as posições dos pivôs de A
+    tol : Float, opcional
+        Tolerancia numerica
+        Padrao 2^(-30) vezes a maior entrada de A em valor absoluto.
+    verbose : Boolean, opcional
+        Imprimir informaçoes intermediarias
+    
+    Saida
+    ----------
+    Lista [E,P], em que:
+    E: Forma completamente escalonada de A.
+    P: Lista com posição dos pivôs de A.
+    """
 
-  T=triangulariza(A,tol=tol,verbose=verbose)
-  return retrossubstituicao(T[0],pospiv=T[1],tol=tol,verbose=verbose)
+    T=triangulariza(A,tol=tol,pivot=pivot,verbose=verbose)
+    
+    return retrossubstituicao(T[0],pospiv=T[1],tol=tol,verbose=verbose)
 #end def
+
+A=np.random.randint(low=-10,high=11,size=(3,5))
+X=triangulariza(np.concatenate([A,np.eye(3)],axis=1),verbose=True)
+
+print(f"R@A={X[0][:,5:]@A}")
