@@ -49,7 +49,7 @@ def determinante(A):
 ##########################################
 ##########################################
 
-def matriz_inversivel(m,li=10):
+def inversivel(m,li=10):
     '''Criar matriz inversível aleatória com entradas inteiras
 
     Parâmetros
@@ -59,7 +59,7 @@ def matriz_inversivel(m,li=10):
 
     Saída
     ----------
-    Matriz inversível mxm. Tipo numpy.matrix, entradas float.'''
+    Matriz inversível mxm. Tipo numpy.array, entradas float.'''
 
     if (abs(li)<1) | (m<1):
         print("Parâmetros inválidos.")
@@ -72,7 +72,7 @@ def matriz_inversivel(m,li=10):
         A=np.random.randint(low=-li,high=li,size=(m,m))
     #end while
 
-    A=np.matriz(A).astype(float)
+    A=np.array(A).astype(float)
 
     return A
 #end def
@@ -83,7 +83,7 @@ def matriz_inversivel(m,li=10):
 ##########################################
 ##########################################
 
-def matriz_unimodular(m,li=10):
+def unimodular(m,li=10):
     '''Criar matriz unimodular (inteira com inversa inteira) aleatória.
 
     Parâmetros
@@ -129,75 +129,72 @@ def matriz_unimodular(m,li=10):
 ##########################################
 
 def random_escalonada(m,n,li=10,verbose=False):
-  '''Esta função cria uma matriz escalonada aleatória.
+    '''
+    Cria uma matriz escalonada inteira aleatória.
 
-  Parâmetros
-  ----------
-  m: número de linhas
-  n: número de colunas
-  li (opcional): controle das entradas da matriz a ser criada
-  verbose: Imprimir informações intermediárias
+    Parametros obrigatorios
+    ----------
+    m , n : inteiros positivos
+        Ordem da matriz
 
-  Saída
-  ----------
-  Uma matriz do tipo numpy.matrix,completamente escalonada, com entradas
-  inteiras (tipo float), de ordem mxn.'''
+    Parametros opcionais
+    ----------
+    li : inteiro, opcional.
+        Controle das entradas da matriz a ser criada
+    verbose : Boolean
+        Imprimir informações intermediárias
 
-  if verbose:
-    def verboseprint(s='',end='\n'):
-      print(s,end)
-    #end def
-  else:
-    def verboseprint(s='',end='\n'):
-      return
-    #end def
-  #end if
+    Saida
+    ----------
+    random_escalonada : array-like de dimensao 2.
+    Uma matriz do tipo numpy.array, completamente escalonada, com entradas
+    inteiras (tipo float), de ordem mxn.
+    '''
+    A=np.random.randint(low=-li,high=li+1,size=(m,n))
+    
+    if verbose:
+        print("Primeiro, criamos uma matriz {m}x{n}\n\
+        aleatória, que depois transformaremos em uma matriz escalonada.")
+        print("A=")
+        print(A)
+    #end if
 
-  verboseprint('Primeiro ,criamos uma matriz ' +str(m)+ ' x ' + str(n) + '\n\
-  aleatória, que depois transformaremos em uma matriz escalonada.')
-  A=np.random.randint(low=-li,high=li,size=(m,n))
-  verboseprint("A=")
-  verboseprint(A)
+    #Escolha o número de pivôs
+    numero_de_pivos=np.random.choice(range(np.min([m,n])))+1
+    #Posições de pivôs
+    posicoes_pivos=merge_sort(np.random.choice(list(range(n)),size=numero_de_pivos,replace=False))
 
-  #Escolha o número de pivôs
+    if verbose:
+        print(f"Vamos utilizar {numero_de_pivos} pivos.")
+        print(f"Posicoes dos pivos: {posicoes_pivos}")
 
-  numero_de_pivos=np.random.choice(range(np.min([m,n])))+1
-  verboseprint('Vamos utilizar ' + str(numero_de_pivos) + ' pivôs.')
+    #Vamos fazer essas serem de fato as posições de pivôs
+    for i in range(numero_de_pivos):
+        #Cancela entradas à esquerda do i-ésimo pivô
+        for j in range(posicoes_pivos[i]):
+            A[i,j]=0
+        #Cancela entradas acima e abaixo do pivô
+        for j in range(m):
+            A[j,posicoes_pivos[i]]=0
 
-  #Posições de pivôs
-  posicoes_pivos=merge_sort(np.random.choice(list(range(n)),size=numero_de_pivos,replace=False))
-
-  verboseprint('Posições dos pivôs: ' + str(posicoes_pivos))
-  verboseprint()
-
-  #Vamos fazer essas serem de fato as posições de pivôs
-  for i in range(numero_de_pivos):
-    #Cancela entradas à esquerda do i-ésimo pivô
-    for j in range(0,posicoes_pivos[i]):
-        A[i,j]=0
-    #Cancela entradas acima e abaixo do pivô
-    for j in range(m):
-      A[j,posicoes_pivos[i]]=0
-
-    #Normaliza o pivô
-    A[i,posicoes_pivos[i]]=1
-    #end if-else
-    verboseprint("Arrumando o " + str(i) + "-esimo pivô:")
-    verboseprint(A)
-    verboseprint()
+        #Normaliza o pivô
+        A[i,posicoes_pivos[i]]=1
+        #end if-else
+        if verbose:
+            print(f"Arrumando o {i}-esimo pivô:")
+            print(A)
+        #end for
     #end for
-  #end for
 
-  verboseprint('Cancelando as linhas abaixo dos pivôs: ',end='')
-  for i in range(numero_de_pivos,m):
-      for j in range(n):
-          A[i,j]=0
-      #end for
-  #end for
-
-  verboseprint(A)
-  verboseprint()
-  return np.matrix(A)
+    for i in range(numero_de_pivos,m):
+        for j in range(n):
+            A[i,j]=0
+        #end for
+    #end for
+    if verbose:
+        print("Cancelando as linhas abaixo dos pivos:")
+        print(A)
+    return A.astype(float)
 #end def
 
 #############################################

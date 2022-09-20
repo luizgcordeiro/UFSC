@@ -2,13 +2,13 @@ import numpy as np
 
 def pivot_partial (x) : return np.argmax(abs(x))
 
-def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
-    '''Triangulariza uma matriz A.
+def ref(A,tol=None,pivot=pivot_partial,verbose=False):
+    '''Escalona parcialmente uma matriz A.
 
     Parametros obrigatorios
     ----------
     A : Array-like de dimensão 2
-        Matriz a ser triangularizada.
+        Matriz a ser escalonada parcialmente.
 
     Parametros opcionais
     ----------
@@ -18,11 +18,11 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
     verbose : Boolean, opcional
         Imprimir informaçoes intermediarias
     pivot : Funcao, opcional
-         Regra de pivoteamento.
-         Deve ser uma funcao que toma uma lista ou array-like nao-vazia
-         e retorna um indice para essa lista. Por padrao, utiliza uma
-         funcao que retorna o indice de maior valor absoluto para fazer
-         pivoteamento parcial.
+        Regra de pivoteamento.
+        Deve ser uma funcao que toma uma lista ou array-like nao-vazia
+        e retorna um indice para essa lista. Por padrao, utiliza uma
+        funcao que retorna o indice de maior valor absoluto para fazer
+        pivoteamento parcial.
 
     Saida
     ----------
@@ -46,11 +46,12 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
     j=0
 
     if verbose:
-      print("Vamos triangularizar a matriz")
+      print("Vamos escalonar parcialmente a matriz")
       print(T)
     #end if
 
-    while (j<n_colunas and n_pivos<n_linhas):
+    num_op=0
+    while (j<n_colunas-1 and n_pivos<n_linhas-1):
         if verbose:
           print("=====")
           print(f"Vamos pivotear a coluna {j}.")
@@ -58,7 +59,6 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
 
         #Encontra o pivô
         p=pivot(T[n_pivos:,j])+n_pivos
-        print(f"p={p}")
         if abs(T[p,j])>tol:
             #Encontramos um pivô.
             #Troca linhas caso necessário
@@ -81,7 +81,9 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
             for k in range(p+1,n_linhas):
                 if abs(T[k,j])>tol:
                     multiplicador=T[k,j]/T[p,j]
+                    num_op+=1
                     T[k,j+1:]=T[k,j+1:]-multiplicador*T[p,j+1:]
+                    num_op+=n_colunas-1-j
                     T[k,j]=0
                 #end if
             #end for
@@ -101,17 +103,20 @@ def triangulariza(A,tol=None,pivot=pivot_partial,verbose=False,):
         j+=1
     #end while
 
+    if verbose:
+        print(f"Numero de operacoes: {num_op}")
+    #end if-else
     return [T,posicao_pivos]
 #end def
 
 
-def retrossubstituicao(A,pospiv=[],tol=None,verbose=False):
+def retrossub(A,pospiv=[],tol=None,verbose=False):
     """Retrossubstituição.
 
     Parametros obrigatorios
     ----------
     A : Array-like de dimensao 2
-        Matriz triangularizada superiormente (parcialmente escalonada)
+        Matriz parcialmente escalonada
 
     Parametros opcionais
     ----------
@@ -202,14 +207,14 @@ def retrossubstituicao(A,pospiv=[],tol=None,verbose=False):
     return [R,pospiv]
 #end function
 
-def escalona(A,tol=None,pivot=pivot_partial,verbose=False):
+def rref(A,tol=None,pivot=pivot_partial,verbose=False):
     """
-    Escalonamento.
+    Escalonamento completo.
 
     Parametros obrigatorios
     ----------
     A : Array-like de dimensao 2
-        Matriz triangularizada superiormente (parcialmente escalonada)
+        Matriz a ser completamente escalonada.
 
     Parametros opcionais
     ----------
@@ -234,12 +239,7 @@ def escalona(A,tol=None,pivot=pivot_partial,verbose=False):
     P: Lista com posição dos pivôs de A.
     """
 
-    T=triangulariza(A,tol=tol,pivot=pivot,verbose=verbose)
+    T=ref(A,tol=tol,pivot=pivot,verbose=verbose)
     
-    return retrossubstituicao(T[0],pospiv=T[1],tol=tol,verbose=verbose)
+    return retrossub(T[0],pospiv=T[1],tol=tol,verbose=verbose)
 #end def
-
-A=np.random.randint(low=-10,high=11,size=(3,5))
-X=triangulariza(np.concatenate([A,np.eye(3)],axis=1),verbose=True)
-
-print(f"R@A={X[0][:,5:]@A}")
