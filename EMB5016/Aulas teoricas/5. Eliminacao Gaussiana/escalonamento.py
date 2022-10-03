@@ -51,7 +51,7 @@ def ref(A,tol=None,pivot=pivot_partial,verbose=False):
     #end if
 
     num_op=0
-    while (j<n_colunas-1 and n_pivos<n_linhas-1):
+    while (j<n_colunas and n_pivos<n_linhas):
         if verbose:
           print("=====")
           print(f"Vamos pivotear a coluna {j}.")
@@ -97,7 +97,7 @@ def ref(A,tol=None,pivot=pivot_partial,verbose=False):
             posicao_pivos.append(j)
         else:
             if verbose:
-              print("A coluna {j} nao tem pivo.")
+              print(f"A coluna {j} nao tem pivo.")
         #end if
         #passa pra próxima coluna
         j+=1
