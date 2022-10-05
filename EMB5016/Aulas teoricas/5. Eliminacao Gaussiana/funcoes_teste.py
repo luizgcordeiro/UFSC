@@ -128,7 +128,7 @@ def unimodular(m,li=10):
 ##########################################
 ##########################################
 
-def random_escalonada(m,n,li=10,verbose=False):
+def random_ref(m,n,li=10,verbose=False):
     '''
     Cria uma matriz escalonada inteira aleatória.
 
@@ -147,8 +147,8 @@ def random_escalonada(m,n,li=10,verbose=False):
     Saida
     ----------
     random_escalonada : array-like de dimensao 2.
-    Uma matriz do tipo numpy.array, completamente escalonada, com entradas
-    inteiras (tipo float), de ordem mxn.
+        Uma matriz do tipo numpy.array, completamente escalonada, com entradas
+        inteiras (tipo float), de ordem mxn.
     '''
     A=np.random.randint(low=-li,high=li+1,size=(m,n))
     
